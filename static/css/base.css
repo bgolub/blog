@@ -1,0 +1,191 @@
+body {
+  background-color: white;
+  margin: 0;
+}
+
+body, 
+input, 
+textarea {
+  color: #222222;
+  font-family: Arial, sans-serif;
+  font-size: 12pt;
+}
+
+img {
+  border: 0;
+}
+
+div {
+  position: relative;
+}
+
+form {
+  margin: 0;
+  padding: 0;
+}
+
+h1, 
+h2, 
+h3 {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+a,
+a:visited {
+  color: #0000cc;
+}
+
+form {
+  margin: 0;
+  padding: 0;
+}
+
+#header {
+  background-color: #bed7f5;
+  height: 56px;
+  position: relative;
+}
+
+#logo {
+  font-size: 16pt;
+  position: absolute;
+  left: 30px;
+  top: 15px;
+}
+
+#logo a,
+#logo a:visited {
+  color: black;
+  text-decoration: none;
+}
+
+#logo a:hover {
+  text-decoration: underline;
+}
+
+#search {
+  position: absolute;
+  top: 16px;
+  right: 30px;
+}
+
+#search input {
+  font-family: Arial, sans-serif;
+  font-size: 10pt;
+}
+
+#body {
+  margin: 30px;
+  max-width: 600px;
+}
+
+#sidebar {
+  margin: 30px;
+  position: absolute;
+  right: 0;
+  width: 250px;
+}
+
+a.new ,
+a.new:visited {
+  color: green;
+}
+
+.entry.full h1 a.delete,
+.entry.full h1 a.delete:visited,
+.entry.full h1 a.edit,
+.entry.full h1 a.edit:visited {
+  font-size: 8pt;
+  color: red;
+}
+
+.navigation {
+    font-size: 10pt;
+    margin-bottom: 1em;
+}
+
+.navigation .next {
+    position: absolute;
+    right: 0;
+    z-index: 1;
+}
+
+#footer {
+  margin: 30px;
+  margin-top: 5em;
+}
+
+.entry.full {
+  clear: both;
+  margin-bottom: 3em;
+}
+
+.entry.full h1 {
+  font-size: 20pt;
+}
+
+.entry.full h1 a,
+.entry.full h1 a:visited {
+  text-decoration: none;
+  color: #222222;
+}
+
+.entry.full .date {
+  margin-top: 0.25em;
+}
+
+.entry.full .body {
+  margin-top: 1em;
+  line-height: 1.3em;
+}
+
+.entry.full .body p {
+  margin: 0;
+  margin-bottom: 1em;
+}
+
+.entry.full .body h2 {
+  font-size: 14pt;
+  margin-bottom: 0.25em;
+}
+
+.entry.full .footer .share {
+  color: #25833e;
+  padding-left: 21px;
+  background: url("/static/images/share.png");
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.entry.summary {
+  margin-bottom: 1em;
+}
+
+.entry.summary h1 {
+  font-size: 16pt;
+  font-weight: normal;
+}
+
+pre, code {
+  color: #007000;
+  font-family: "bogus font here", monospace;
+  font-size: 100%;
+}
+
+pre {
+  border: 1px solid silver;
+  background-color: #f5f5f5;
+  padding: 0.5em;
+  overflow: auto;
+  margin: 2em;
+}
+
+ul {
+  margin: 0;
+  margin-bottom: 1em;
+}
+
+ul li {
+  margin-bottom: 0.3em;
+}

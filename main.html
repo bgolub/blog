@@ -1,0 +1,12 @@
+{% extends "entries.html" %}
+
+{% block entry_class %}{{ block.super }} full{% endblock %}
+
+{% block below_entries %}
+    <div class="navigation">
+        <a class="previous" href="?start={{ previous }}">&laquo; Previous</a>
+        {% if next %}
+            <a class="next" href="?start={{ next }}">Next &raquo;</a>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block body %}
+    {% block above_entries %}{% endblock %}
+    {% for entry in entries %}
+        <div id="{{ entry.key }}" class="{% block entry_class %}entry{% endblock %}">
+            <h1>
+                <a href="/e/{{ entry.slug }}">{{ entry.title }}</a>
+                <a class="edit" href="/edit/{{ entry.key }}">edit</a>
+                <a class="delete" href="#">delete</a>
+            </h1>
+            <div class="date" title="{{ entry.published }}">
+                {{ entry.published|timesince }} ago
+            </div>
+            <div class="body">
+                {{ entry.body }}
+            </div>
+            {% if admin %}
+            {% endif %}
+        </div>
+    {% endfor %}
+    {% block below_entries %}{% endblock %}
+{% endblock %}
