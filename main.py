@@ -80,6 +80,15 @@ class BaseRequestHandler(webapp.RequestHandler):
         self.response.out.write(template.render(path, extra_context))
 
 
+class ArchivePageHandler(BaseRequestHandler):
+    def get(self):
+        entries = db.Query(Entry).order('-published')
+        extra_context = {
+            'entries': entries,
+        }
+        self.render('archive.html', extra_context)
+
+
 class DeleteEntryHandler(BaseRequestHandler):
     @admin
     def post(self):
@@ -171,6 +180,7 @@ class NewEntryHandler(BaseRequestHandler):
 
 application = webapp.WSGIApplication([
     ('/', MainPageHandler),
+    ('/archive', ArchivePageHandler),
     ('/delete', DeleteEntryHandler),
     ('/edit/([\w-]+)', NewEntryHandler),
     ('/e/([\w-]+)', EntryPageHandler),
