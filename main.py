@@ -115,6 +115,8 @@ class MainPageHandler(BaseRequestHandler):
     def get(self):
         offset = self.get_integer_argument('start', 0)
         entries = db.Query(Entry).order('-published').fetch(limit=10, offset=offset)
+        if not entries and offset > 0:
+            return self.redirect('/')
         if self.request.get('format', None) == 'atom':
             return self.render_feed(entries)
         extra_context = {
