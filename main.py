@@ -58,7 +58,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         f = feedgenerator.Atom1Feed(
             title = 'Benjamin Golub\'s Blog',
             link = 'http://' + self.request.host,
-            description = 'benjamin Golub\'s Blog',
+            description = 'Benjamin Golub\'s Blog',
             language = 'en',
         )
         for entry in entries:
@@ -144,19 +144,23 @@ class NewEntryHandler(BaseRequestHandler):
         form = EntryForm(data=self.request.POST)
         if form.is_valid():
             if key:
-                entry = db.get(key)
-                entry.body = self.request.get('body')
-                entry.title = self.request.get('title')
+                try:
+                    entry = db.get(key)
+                    entry.body = self.request.get('body')
+                    entry.title = self.request.get('title')
+                    entry.put()
+                    return self.redirect('/e/' + entry.slug)
+                except db.BadKeyError:
+                    pass
+            else:
+                entry = Entry(
+                    author=users.get_current_user(),
+                    body=self.request.get('body'),
+                    title=self.request.get('title'),
+                    slug=slugify(self.request.get('title'))
+                )
                 entry.put()
                 return self.redirect('/e/' + entry.slug)
-            entry = Entry(
-                author=users.get_current_user(),
-                body=self.request.get('body'),
-                title=self.request.get('title'),
-                slug=slugify(self.request.get('title'))
-            )
-            entry.put()
-            return self.redirect('/e/' + entry.slug)
         extra_context = {
             'form': form,
         }
