@@ -109,7 +109,8 @@ class EntryPageHandler(BaseRequestHandler):
         if not entry:
             return self.error(404)
         extra_context = {
-            'entries': [entry],
+            'entries': [entry], # So we can use the same template for everything
+            'entry': entry, # To easily pull out the title
         }
         previous = db.Query(Entry).filter('published <', entry.published).order('-published').get()
         if previous:
