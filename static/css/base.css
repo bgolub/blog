@@ -167,13 +167,25 @@ a.new:visited {
   margin-bottom: 1em;
 }
 
+#sidebar .entry.summary {
+  margin-bottom: .25em;
+}
+
 .entry.summary h1 {
   font-size: 16pt;
   font-weight: normal;
 }
 
+#sidebar .entry.summary h1 {
+  font-size: 12pt;
+}
+
 .entry.summary .date {
   font-size: 12pt;
+}
+
+#sidebar .entry.summary .date {
+  font-size: 8pt;
 }
 
 .entry.summary .body {

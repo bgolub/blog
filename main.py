@@ -49,6 +49,17 @@ class EntryForm(djangoforms.ModelForm):
 
 
 class BaseRequestHandler(webapp.RequestHandler):
+    def get_recent_entries(self):
+        key = 'recent/entries'
+        entries = memcache.get(key)
+        if not entries:
+            entries = db.Query(Entry).order('-published').fetch(limit=10)
+            memcache.set(key, entries)
+        return entries
+
+    def kill_recent_entries_cache(self):
+        memcache.delete('recent/entries')
+        
     def get_integer_argument(self, name, default):
         try:
             return int(self.request.get(name, default))
@@ -79,6 +90,7 @@ class BaseRequestHandler(webapp.RequestHandler):
     def render(self, template_file, extra_context={}):
         extra_context['request'] = self.request
         extra_context['admin'] = users.is_current_user_admin()
+        extra_context['recent_entries'] = self.get_recent_entries()
         path = os.path.join(os.path.dirname(__file__), template_file)
         self.response.out.write(template.render(path, extra_context))
 
@@ -99,6 +111,7 @@ class DeleteEntryHandler(BaseRequestHandler):
         try:
             entry = db.get(key)
             entry.delete()
+            self.kill_recent_entries_cache()
         except db.BadKeyError:
             data = {'success': False}
         data = {'success': True}
@@ -153,7 +166,7 @@ class NewEntryHandler(BaseRequestHandler):
         if key:
             try:
                 entry = db.get(key)
-                extra_context['tags'] = ", ".join(entry.tags)
+                extra_context['tags'] = ', '.join(entry.tags)
                 form = EntryForm(instance=entry)
             except db.BadKeyError:
                 return self.redirect('/new')
@@ -171,6 +184,7 @@ class NewEntryHandler(BaseRequestHandler):
                     entry.title = self.request.get('title')
                     entry.tags = self.get_tags_argument('tags')
                     entry.put()
+                    self.kill_recent_entries_cache()
                     return self.redirect('/e/' + entry.slug)
                 except db.BadKeyError:
                     pass
@@ -183,6 +197,7 @@ class NewEntryHandler(BaseRequestHandler):
                     tags=self.get_tags_argument('tags'),
                 )
                 entry.put()
+                self.kill_recent_entries_cache()
                 return self.redirect('/e/' + entry.slug)
         extra_context = {
             'form': form,
