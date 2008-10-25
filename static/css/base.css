@@ -115,6 +115,10 @@ a.new:visited {
   z-index: 1;
 }
 
+.infomessage {
+    margin-bottom: 1em;
+}
+
 #footer {
   margin: 30px;
   margin-top: 5em;
@@ -140,6 +144,7 @@ a.new:visited {
 }
 
 .entry.full .body {
+  margin-bottom: 1em;
   margin-top: 1em;
   line-height: 1.3em;
 }
@@ -154,12 +159,8 @@ a.new:visited {
   margin-bottom: 0.25em;
 }
 
-.entry.full .footer .share {
-  color: #25833e;
-  padding-left: 21px;
-  background: url("/static/images/share.png");
-  text-decoration: underline;
-  cursor: pointer;
+.entry.full .tags {
+  margin-bottom: .25em;
 }
 
 .entry.summary {

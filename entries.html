@@ -17,6 +17,14 @@
             <div class="body">
                 {{ entry.body }}
             </div>
+            {% if entry.tags %}
+                <div class="tags">
+                    Tagged:
+                    {% for tag in entry.tags %}
+                        <a href="/t/{{ tag }}">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
             <a href="/e/{{ entry.slug }}#disqus_thread">View Comments</a>
         </div>
     {% endfor %}

@@ -3,6 +3,7 @@ import os
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
+from django import newforms as forms
 from django.template.defaultfilters import slugify
 from django.utils import feedgenerator
 from django.utils import simplejson
@@ -38,12 +39,13 @@ class Entry(db.Model):
     body = db.TextProperty(required=True)
     published = db.DateTimeProperty(auto_now_add=True)
     updated = db.DateTimeProperty(auto_now=True)
+    tags = db.ListProperty(db.Category)
 
 
 class EntryForm(djangoforms.ModelForm):
     class Meta:
         model = Entry
-        exclude = ['author', 'slug', 'published', 'updated']
+        exclude = ['author', 'slug', 'published', 'updated', 'tags']
 
 
 class BaseRequestHandler(webapp.RequestHandler):
@@ -97,8 +99,8 @@ class DeleteEntryHandler(BaseRequestHandler):
             entry = db.get(key)
             entry.delete()
         except db.BadKeyError:
-            data = {"success": False}
-        data = {"success": True}
+            data = {'success': False}
+        data = {'success': True}
         json = simplejson.dumps(data)
         return self.response.out.write(json)
 
@@ -114,10 +116,10 @@ class EntryPageHandler(BaseRequestHandler):
         }
         previous = db.Query(Entry).filter('published <', entry.published).order('-published').get()
         if previous:
-            extra_context["previous"] = previous
+            extra_context['previous'] = previous
         next = db.Query(Entry).filter('published >', entry.published).order('published').get()
         if next:
-            extra_context["next"] = next
+            extra_context['next'] = next
         self.render('entry.html', extra_context)
 
 
@@ -138,6 +140,11 @@ class MainPageHandler(BaseRequestHandler):
 
 
 class NewEntryHandler(BaseRequestHandler):
+    def get_tags_argument(self, name):
+        tags = [slugify(tag) for tag in self.request.get(name, '').split(',')]
+        tags = set([tag for tag in tags if tag])
+        return [db.Category(tag) for tag in tags]
+    
     @admin
     def get(self, key=None):
         extra_context = {}
@@ -145,9 +152,10 @@ class NewEntryHandler(BaseRequestHandler):
         if key:
             try:
                 entry = db.get(key)
+                extra_context['tags'] = ", ".join(entry.tags)
                 form = EntryForm(instance=entry)
             except db.BadKeyError:
-                return self.redirect("/new")
+                return self.redirect('/new')
         extra_context['form'] = form
         self.render('new.html', extra_context)
 
@@ -160,6 +168,7 @@ class NewEntryHandler(BaseRequestHandler):
                     entry = db.get(key)
                     entry.body = self.request.get('body')
                     entry.title = self.request.get('title')
+                    entry.tags = self.get_tags_argument('tags')
                     entry.put()
                     return self.redirect('/e/' + entry.slug)
                 except db.BadKeyError:
@@ -169,7 +178,8 @@ class NewEntryHandler(BaseRequestHandler):
                     author=users.get_current_user(),
                     body=self.request.get('body'),
                     title=self.request.get('title'),
-                    slug=slugify(self.request.get('title'))
+                    slug=slugify(self.request.get('title')),
+                    tags=self.get_tags_argument('tags'),
                 )
                 entry.put()
                 return self.redirect('/e/' + entry.slug)
@@ -177,7 +187,17 @@ class NewEntryHandler(BaseRequestHandler):
             'form': form,
         }
         self.render('new.html', extra_context)
-        
+
+
+class TagPageHandler(BaseRequestHandler):
+    def get(self, tag):
+        entries = db.Query(Entry).filter('tags =', tag).order('-published')
+        extra_context = {
+            'entries': entries,
+            'tag': tag,
+        }
+        self.render('tag.html', extra_context)
+
 
 application = webapp.WSGIApplication([
     ('/', MainPageHandler),
@@ -186,6 +206,7 @@ application = webapp.WSGIApplication([
     ('/edit/([\w-]+)', NewEntryHandler),
     ('/e/([\w-]+)', EntryPageHandler),
     ('/new', NewEntryHandler),
+    ('/t/([\w-]+)', TagPageHandler),
 ], debug=True)
 
 def main():
