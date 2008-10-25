@@ -70,6 +70,7 @@ class BaseRequestHandler(webapp.RequestHandler):
                 description = entry.body,
                 author_name = entry.author.nickname(),
                 pubdate = entry.published,
+                categories = entry.tags,
             )
         data = f.writeString('utf-8')
         self.response.out.write(data)
