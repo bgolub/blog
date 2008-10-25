@@ -53,7 +53,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         key = 'recent/entries'
         entries = memcache.get(key)
         if not entries:
-            entries = db.Query(Entry).order('-published').fetch(limit=10)
+            entries = db.Query(Entry).order('-published').fetch(limit=5)
             memcache.set(key, entries)
         return entries
 
