@@ -99,11 +99,6 @@ class BaseRequestHandler(webapp.RequestHandler):
         self.response.out.write(template.render(path, extra_context))
 
 
-class NotFoundHandler(BaseRequestHandler):
-    def get(self):
-        return self.raise_error(404)
-
-
 class ArchivePageHandler(BaseRequestHandler):
     def get(self):
         entries = db.Query(Entry).order('-published')
@@ -212,6 +207,11 @@ class NewEntryHandler(BaseRequestHandler):
             'form': form,
         }
         self.render('new.html', extra_context)
+
+
+class NotFoundHandler(BaseRequestHandler):
+    def get(self):
+        return self.raise_error(404)
 
 
 class OldBlogRedirectHandler(BaseRequestHandler):
