@@ -49,6 +49,10 @@ class EntryForm(djangoforms.ModelForm):
 
 
 class BaseRequestHandler(webapp.RequestHandler):
+    def raise_error(self, code):
+        self.error(code)
+        self.render('%i.html' % code)
+
     def get_recent_entries(self):
         key = 'recent/entries'
         entries = memcache.get(key)
@@ -95,6 +99,11 @@ class BaseRequestHandler(webapp.RequestHandler):
         self.response.out.write(template.render(path, extra_context))
 
 
+class NotFoundHandler(BaseRequestHandler):
+    def get(self):
+        return self.raise_error(404)
+
+
 class ArchivePageHandler(BaseRequestHandler):
     def get(self):
         entries = db.Query(Entry).order('-published')
@@ -123,7 +132,7 @@ class EntryPageHandler(BaseRequestHandler):
     def get(self, slug):
         entry = db.Query(Entry).filter('slug =', slug).get()
         if not entry:
-            return self.error(404)
+            return self.raise_error(404)
         extra_context = {
             'entries': [entry], # So we can use the same template for everything
             'entry': entry, # To easily pull out the title
@@ -230,6 +239,7 @@ application = webapp.WSGIApplication([
     ('/new', NewEntryHandler),
     ('/t/([\w-]+)', TagPageHandler),
     ('/(\d+)/(\d+)/(\d+)/([\w-]+)/?', OldBlogRedirectHandler),
+    ('/.*', NotFoundHandler),
 ], debug=True)
 
 def main():
