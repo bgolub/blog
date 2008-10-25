@@ -205,6 +205,12 @@ class NewEntryHandler(BaseRequestHandler):
         self.render('new.html', extra_context)
 
 
+class OldBlogRedirectHandler(BaseRequestHandler):
+    def get(self, year, month, day, slug):
+        self.redirect('http://old.benjamingolub.com/%s/%s/%s/%s/' % 
+            (year, month, day, slug))
+
+
 class TagPageHandler(BaseRequestHandler):
     def get(self, tag):
         entries = db.Query(Entry).filter('tags =', tag).order('-published')
@@ -223,6 +229,7 @@ application = webapp.WSGIApplication([
     ('/e/([\w-]+)', EntryPageHandler),
     ('/new', NewEntryHandler),
     ('/t/([\w-]+)', TagPageHandler),
+    ('/(\d+)/(\d+)/(\d+)/([\w-]+)/?', OldBlogRedirectHandler),
 ], debug=True)
 
 def main():
