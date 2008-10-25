@@ -201,3 +201,11 @@ ul {
 ul li {
   margin-bottom: 0.3em;
 }
+
+pre {
+  border: 1px solid silver;
+  background-color: #f5f5f5;
+  padding: 0.5em;
+  overflow: auto;
+  margin: 2em;
+}
