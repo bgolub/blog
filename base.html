@@ -31,12 +31,10 @@
         <div class="box">
             {% for entry in recent_entries %}
                 <div class="entry summary">
-                    <h1>
-                        <a href="/e/{{ entry.slug }}">{{ entry.title }}</a>
-                        <span class="date" title="{{ entry.published }}">
-                            - {{ entry.published|timesince }} ago
-                        </span>
-                    </h1>
+                    <a href="/e/{{ entry.slug }}">{{ entry.title }}</a>
+                    <span class="date" title="{{ entry.published }}">
+                        - {{ entry.published|timesince }} ago
+                    </span>
                 </div>
             {% endfor %}
         </div>
