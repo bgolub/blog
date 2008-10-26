@@ -4,7 +4,9 @@
 
 {% block below_entries %}
     <div class="navigation">
-        <a class="previous" href="?start={{ previous }}">&laquo; Previous</a>
+        {% if previous %}
+            <a class="previous" href="?start={{ previous }}">&laquo; Previous</a>
+        {% endif %}
         {% if next %}
             <a class="next" href="?start={{ next }}">Next &raquo;</a>
         {% endif %}
