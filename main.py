@@ -54,15 +54,25 @@ class BaseRequestHandler(webapp.RequestHandler):
         self.render('%i.html' % code)
 
     def get_recent_entries(self):
-        key = 'recent/entries'
+        key = 'entries/recent'
         entries = memcache.get(key)
         if not entries:
             entries = db.Query(Entry).order('-published').fetch(limit=5)
             memcache.set(key, entries)
         return entries
 
-    def kill_recent_entries_cache(self):
-        memcache.delete('recent/entries')
+    def get_main_page_entries(self):
+        key = 'entries/main'
+        entries = memcache.get(key)
+        if not entries:
+            entries = db.Query(Entry).order('-published').fetch(limit=10)
+            memcache.set(key, entries)
+            memcache.set(key, entries)
+        return entries
+
+    def kill_entries_cache(self):
+        memcache.delete('entries/recent')
+        memcache.delete('entries/main')
         
     def get_integer_argument(self, name, default):
         try:
@@ -115,7 +125,7 @@ class DeleteEntryHandler(BaseRequestHandler):
         try:
             entry = db.get(key)
             entry.delete()
-            self.kill_recent_entries_cache()
+            self.kill_entries_cache()
         except db.BadKeyError:
             data = {'success': False}
         data = {'success': True}
@@ -144,7 +154,10 @@ class EntryPageHandler(BaseRequestHandler):
 class MainPageHandler(BaseRequestHandler):
     def get(self):
         offset = self.get_integer_argument('start', 0)
-        entries = db.Query(Entry).order('-published').fetch(limit=10, offset=offset)
+        if not offset:
+            entries = self.get_main_page_entries()
+        else:
+            entries = db.Query(Entry).order('-published').fetch(limit=10, offset=offset)
         if not entries and offset > 0:
             return self.redirect('/')
         if self.request.get('format', None) == 'atom':
@@ -188,7 +201,7 @@ class NewEntryHandler(BaseRequestHandler):
                     entry.title = self.request.get('title')
                     entry.tags = self.get_tags_argument('tags')
                     entry.put()
-                    self.kill_recent_entries_cache()
+                    self.kill_entries_cache()
                     return self.redirect('/e/' + entry.slug)
                 except db.BadKeyError:
                     pass
@@ -201,7 +214,7 @@ class NewEntryHandler(BaseRequestHandler):
                     tags=self.get_tags_argument('tags'),
                 )
                 entry.put()
-                self.kill_recent_entries_cache()
+                self.kill_entries_cache()
                 return self.redirect('/e/' + entry.slug)
         extra_context = {
             'form': form,
