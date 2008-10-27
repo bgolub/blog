@@ -232,12 +232,12 @@ class TagPageHandler(BaseRequestHandler):
 
 application = webapp.WSGIApplication([
     ('/', MainPageHandler),
-    ('/archive', ArchivePageHandler),
-    ('/delete', DeleteEntryHandler),
-    ('/edit/([\w-]+)', NewEntryHandler),
-    ('/e/([\w-]+)', EntryPageHandler),
-    ('/new', NewEntryHandler),
-    ('/t/([\w-]+)', TagPageHandler),
+    ('/archive/?', ArchivePageHandler),
+    ('/delete/?', DeleteEntryHandler),
+    ('/edit/([\w-]+)/?', NewEntryHandler),
+    ('/e/([\w-]+)/?', EntryPageHandler),
+    ('/new/?', NewEntryHandler),
+    ('/t/([\w-]+)/?', TagPageHandler),
     ('/(\d+)/(\d+)/(\d+)/([\w-]+)/?', OldBlogRedirectHandler),
     ('/.*', NotFoundHandler),
 ], debug=True)
