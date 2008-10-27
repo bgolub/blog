@@ -217,7 +217,7 @@ class NotFoundHandler(BaseRequestHandler):
 class OldBlogRedirectHandler(BaseRequestHandler):
     def get(self, year, month, day, slug):
         self.redirect('http://old.benjamingolub.com/%s/%s/%s/%s/' % 
-            (year, month, day, slug))
+            (year, month, day, slug), permanent=True)
 
 
 class TagPageHandler(BaseRequestHandler):
