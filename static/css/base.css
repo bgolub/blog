@@ -112,8 +112,10 @@ a.delete {
 .entry.full h1 a.delete:visited,
 .entry.full h1 a.edit,
 .entry.full h1 a.edit:visited {
+  text-decoration: underline;
   font-size: 10pt;
   color: red;
+  font-weight: normal;
 }
 
 .navigation {
