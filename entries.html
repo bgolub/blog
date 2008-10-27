@@ -17,6 +17,10 @@
             <div class="body">
                 {{ entry.body }}
             </div>
+            <div class="share">
+                <a href="#" onclick="var e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('src','http://friendfeed.com/share/bookmarklet/javascript?url={% filter urlencode %}http://{{ request.host }}/e/{{ entry.slug }}{% endfilter %}&amp;title={{ entry.title|urlencode }}');document.body.appendChild(e); return false;"><img src="http://friendfeed.com/static/images/icons/internal.png" title="Share on FriendFeed" alt="Share on FriendFeed"/></a>
+                <a href="http://reddit.com/submit?url={% filter urlencode %}http://{{ request.host }}/e/{{ entry.slug }}{% endfilter %}&amp;title={{ entry.title|urlencode }}"><img src="http://friendfeed.com/static/images/icons/reddit.png" title="Share on Reddit" alt="Share on Reddit"/></a>
+            </div>
             {% if entry.tags %}
                 <div class="tags">
                     {% for tag in entry.tags %}
