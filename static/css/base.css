@@ -94,13 +94,25 @@ form {
 a.new ,
 a.new:visited {
   color: green;
+  padding-left: 20px;
+  background: url('../images/page_add.png') left center no-repeat;
+}
+
+a.edit {
+  padding-left: 20px;
+  background: url('../images/page_edit.png') left center no-repeat;
+}
+
+a.delete {
+  padding-left: 20px;
+  background: url('../images/page_delete.png') left center no-repeat;
 }
 
 .entry.full h1 a.delete,
 .entry.full h1 a.delete:visited,
 .entry.full h1 a.edit,
 .entry.full h1 a.edit:visited {
-  font-size: 8pt;
+  font-size: 10pt;
   color: red;
 }
 
