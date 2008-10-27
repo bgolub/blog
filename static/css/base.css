@@ -173,8 +173,7 @@ a.delete {
   margin-bottom: 0.25em;
 }
 
-.entry.full .tags {
-  margin-bottom: .25em;
+.entry .tags {
   background: url('../images/tag_blue.png') left center no-repeat;
   padding-left: 20px;
 }
@@ -201,6 +200,7 @@ a.delete {
 }
 
 .entry.summary .body {
+  margin-bottom: .5em;
   margin-top: .5em;
   line-height: 1.3em;
 }
