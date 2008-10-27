@@ -19,7 +19,6 @@
             </div>
             {% if entry.tags %}
                 <div class="tags">
-                    Tagged:
                     {% for tag in entry.tags %}
                         <a href="/t/{{ tag }}">{{ tag }}</a>
                     {% endfor %}
