@@ -73,19 +73,19 @@ class BaseRequestHandler(webapp.RequestHandler):
 
     def render_feed(self, entries):
         f = feedgenerator.Atom1Feed(
-            title = 'Benjamin Golub\'s Blog',
-            link = 'http://' + self.request.host,
-            description = 'Benjamin Golub\'s Blog',
-            language = 'en',
+            title='Benjamin Golub\'s Blog',
+            link='http://' + self.request.host,
+            description='Benjamin Golub\'s Blog',
+            language='en',
         )
         for entry in entries:
             f.add_item(
-                title = entry.title,
-                link = '/e/%s' % entry.slug,
-                description = entry.body,
-                author_name = entry.author.nickname(),
-                pubdate = entry.published,
-                categories = entry.tags,
+                title=entry.title,
+                link='/e/%s' % entry.slug,
+                description=entry.body,
+                author_name=entry.author.nickname(),
+                pubdate=entry.published,
+                categories=entry.tags,
             )
         data = f.writeString('utf-8')
         self.response.out.write(data)
