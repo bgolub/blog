@@ -67,12 +67,20 @@ class BaseRequestHandler(webapp.RequestHandler):
         if not entries:
             entries = db.Query(Entry).order('-published').fetch(limit=10)
             memcache.set(key, entries)
+        return entries
+
+    def get_archive_entries(self):
+        key = 'entries/archive'
+        entries = memcache.get(key)
+        if not entries:
+            entries = db.Query(Entry).order('-published')
             memcache.set(key, entries)
         return entries
 
     def kill_entries_cache(self):
         memcache.delete('entries/recent')
         memcache.delete('entries/main')
+        memcache.delete('entries/archive')
         
     def get_integer_argument(self, name, default):
         try:
@@ -111,7 +119,7 @@ class BaseRequestHandler(webapp.RequestHandler):
 
 class ArchivePageHandler(BaseRequestHandler):
     def get(self):
-        entries = db.Query(Entry).order('-published')
+        entries = self.get_archive_entries()
         extra_context = {
             'entries': entries,
         }
