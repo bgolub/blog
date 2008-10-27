@@ -189,6 +189,11 @@ a.new:visited {
   line-height: 1.3em;
 }
 
+.entry .comments {
+  background: url('../images/comments.png') left center no-repeat;
+  padding-left: 20px;
+}
+
 ul {
   margin: 0;
   margin-bottom: 1em;
