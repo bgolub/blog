@@ -77,17 +77,37 @@ class BaseRequestHandler(webapp.RequestHandler):
             memcache.set(key, entries)
         return entries
 
-    def kill_entries_cache(self):
+    def get_entry(self, slug):
+        key = 'entry/%s' % slug
+        entry = memcache.get(key)
+        if not entry:
+            entry = db.Query(Entry).filter('slug =', slug).get()
+            if entry:
+                memcache.set(key, entry)
+        return entry
+
+    def get_tagged_entries(self, tag):
+        key = 'enries/tag/%s' % tag
+        entries = memcache.get(key)
+        if not entries:
+            entries = db.Query(Entry).filter('tags =', tag).order('-published')
+            memcache.set(key, entries)
+        return entries
+
+    def kill_entries_cache(self, slug=None, tags=[]):
         memcache.delete('entries/recent')
         memcache.delete('entries/main')
         memcache.delete('entries/archive')
+        if slug:
+            memcache.delete('entry/%s' % slug)
+        for tag in tags:
+            memcache.delete('entry/tagged/%s' % tag)
         
     def get_integer_argument(self, name, default):
         try:
             return int(self.request.get(name, default))
         except ValueError:
             return default
-
 
     def render_feed(self, entries):
         f = feedgenerator.Atom1Feed(
@@ -133,7 +153,7 @@ class DeleteEntryHandler(BaseRequestHandler):
         try:
             entry = db.get(key)
             entry.delete()
-            self.kill_entries_cache()
+            self.kill_entries_cache(slug=entry.slug, tags=entry.tags)
         except db.BadKeyError:
             data = {'success': False}
         data = {'success': True}
@@ -143,7 +163,7 @@ class DeleteEntryHandler(BaseRequestHandler):
 
 class EntryPageHandler(BaseRequestHandler):
     def get(self, slug):
-        entry = db.Query(Entry).filter('slug =', slug).get()
+        entry = self.get_entry(slug=slug)
         if not entry:
             return self.raise_error(404)
         extra_context = {
@@ -209,7 +229,7 @@ class NewEntryHandler(BaseRequestHandler):
                     entry.title = self.request.get('title')
                     entry.tags = self.get_tags_argument('tags')
                     entry.put()
-                    self.kill_entries_cache()
+                    self.kill_entries_cache(slug=entry.slug, tags=entry.tags)
                     return self.redirect('/e/' + entry.slug)
                 except db.BadKeyError:
                     pass
@@ -222,7 +242,7 @@ class NewEntryHandler(BaseRequestHandler):
                     tags=self.get_tags_argument('tags'),
                 )
                 entry.put()
-                self.kill_entries_cache()
+                self.kill_entries_cache(tags=entry.tags)
                 return self.redirect('/e/' + entry.slug)
         extra_context = {
             'form': form,
@@ -243,7 +263,7 @@ class OldBlogRedirectHandler(BaseRequestHandler):
 
 class TagPageHandler(BaseRequestHandler):
     def get(self, tag):
-        entries = db.Query(Entry).filter('tags =', tag).order('-published')
+        entries = self.get_tagged_entries(tag)
         extra_context = {
             'entries': entries,
             'tag': tag,
