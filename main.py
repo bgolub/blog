@@ -170,10 +170,8 @@ class EntryPageHandler(BaseRequestHandler):
             'entries': [entry], # So we can use the same template for everything
             'entry': entry, # To easily pull out the title
         }
-        previous = db.Query(Entry).filter('published <', entry.published).order('-published').get()
-        extra_context['previous'] = previous
-        next = db.Query(Entry).filter('published >', entry.published).order('published').get()
-        extra_context['next'] = next
+        extra_context['previous'] = db.Query(Entry).filter('published <', entry.published).order('-published').get()
+        extra_context['next'] = db.Query(Entry).filter('published >', entry.published).order('published').get()
         self.render('entry.html', extra_context)
 
 
