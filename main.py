@@ -139,9 +139,8 @@ class BaseRequestHandler(webapp.RequestHandler):
 
 class ArchivePageHandler(BaseRequestHandler):
     def get(self):
-        entries = self.get_archive_entries()
         extra_context = {
-            'entries': entries,
+            'entries': self.get_archive_entries(),
         }
         self.render('archive.html', extra_context)
 
@@ -169,9 +168,9 @@ class EntryPageHandler(BaseRequestHandler):
         extra_context = {
             'entries': [entry], # So we can use the same template for everything
             'entry': entry, # To easily pull out the title
+            'previous': db.Query(Entry).filter('published <', entry.published).order('-published').get(),
+            'next': db.Query(Entry).filter('published >', entry.published).order('published').get(),
         }
-        extra_context['previous'] = db.Query(Entry).filter('published <', entry.published).order('-published').get()
-        extra_context['next'] = db.Query(Entry).filter('published >', entry.published).order('published').get()
         self.render('entry.html', extra_context)
 
 
@@ -259,9 +258,8 @@ class OldBlogRedirectHandler(BaseRequestHandler):
 
 class TagPageHandler(BaseRequestHandler):
     def get(self, tag):
-        entries = self.get_tagged_entries(tag)
         extra_context = {
-            'entries': entries,
+            'entries': self.get_tagged_entries(tag),
             'tag': tag,
         }
         self.render('tag.html', extra_context)
