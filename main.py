@@ -171,11 +171,9 @@ class EntryPageHandler(BaseRequestHandler):
             'entry': entry, # To easily pull out the title
         }
         previous = db.Query(Entry).filter('published <', entry.published).order('-published').get()
-        if previous:
-            extra_context['previous'] = previous
+        extra_context['previous'] = previous
         next = db.Query(Entry).filter('published >', entry.published).order('published').get()
-        if next:
-            extra_context['next'] = next
+        extra_context['next'] = next
         self.render('entry.html', extra_context)
 
 
