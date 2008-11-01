@@ -154,9 +154,9 @@ class DeleteEntryHandler(BaseRequestHandler):
             entry = db.get(key)
             entry.delete()
             self.kill_entries_cache(slug=entry.slug, tags=entry.tags)
+            data = {'success': True}
         except db.BadKeyError:
             data = {'success': False}
-        data = {'success': True}
         json = simplejson.dumps(data)
         return self.response.out.write(json)
 
