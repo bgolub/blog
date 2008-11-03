@@ -174,6 +174,11 @@ class EntryPageHandler(BaseRequestHandler):
         self.render('entry.html', extra_context)
 
 
+class FeedRedirectHandler(BaseRequestHandler):
+    def get(self):
+        return self.redirect('/?format=atom', permanent=True)
+
+
 class MainPageHandler(BaseRequestHandler):
     def get(self):
         offset = self.get_integer_argument('start', 0)
@@ -274,6 +279,7 @@ application = webapp.WSGIApplication([
     ('/new/?', NewEntryHandler),
     ('/t/([\w-]+)/?', TagPageHandler),
     ('/(\d+)/(\d+)/(\d+)/([\w-]+)/?', OldBlogRedirectHandler),
+    ('/feed/?', FeedRedirectHandler),
     ('/.*', NotFoundHandler),
 ], debug=True)
 
