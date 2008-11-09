@@ -47,6 +47,11 @@
         <div class="box">
             <script type="text/javascript" src="http://friendfeed.com/embed/badge/bgolub"></script><noscript><a href="http://friendfeed.com/bgolub"><img alt="View my FriendFeed" style="border:0;" src="http://friendfeed.com/embed/badge/bgolub?format=png"/></a></noscript>
         </div>
+        {% if current_city %}
+            <div class="box">
+                <a href="{{ current_city.url }}"><img src="http://maps.google.com/staticmap?zoom=12&size=250x150&maptype=mobile&markers={{ current_city.latitude }},{{ current_city.longitude }}&key={{ current_city.maps_api_key }}" title="{{ current_city.name }}, {{ current_city.region }}"/></a>
+            </div>
+        {% endif %}
     </div>
     <div id="body">
         {% block body %}

@@ -1,6 +1,8 @@
 import functools
 import os
 
+from django.conf import settings
+settings._target = None
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from django import newforms as forms
@@ -52,6 +54,20 @@ class BaseRequestHandler(webapp.RequestHandler):
     def raise_error(self, code):
         self.error(code)
         self.render('%i.html' % code)
+
+    def get_current_city(self):
+        key = 'current_city/now'
+        current_city = memcache.get(key)
+        if not current_city:
+            response = urlfetch.fetch("https://www.dopplr.com/api/traveller_info?format=js&token=" + settings.DOPPLR_TOKEN)
+            if response.status_code == 200:
+                data = simplejson.loads(response.content)
+                current_city = data["traveller"]["current_city"]
+                current_city["maps_api_key"] = settings.MAPS_API_KEY
+                memcache.set(key, current_city, 60*60*5)
+            else:
+                current_city = None
+        return current_city
 
     def get_recent_entries(self):
         key = 'entries/recent'
@@ -133,6 +149,8 @@ class BaseRequestHandler(webapp.RequestHandler):
         extra_context['request'] = self.request
         extra_context['admin'] = users.is_current_user_admin()
         extra_context['recent_entries'] = self.get_recent_entries()
+        if settings.SHOW_CURRENT_CITY:
+            extra_context['current_city'] = self.get_current_city()
         path = os.path.join(os.path.dirname(__file__), template_file)
         self.response.out.write(template.render(path, extra_context))
 
