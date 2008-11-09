@@ -59,11 +59,11 @@ class BaseRequestHandler(webapp.RequestHandler):
         key = 'current_city/now'
         current_city = memcache.get(key)
         if not current_city:
-            response = urlfetch.fetch("https://www.dopplr.com/api/traveller_info?format=js&token=" + settings.DOPPLR_TOKEN)
+            response = urlfetch.fetch('https://www.dopplr.com/api/traveller_info?format=js&token=' + settings.DOPPLR_TOKEN)
             if response.status_code == 200:
                 data = simplejson.loads(response.content)
-                current_city = data["traveller"]["current_city"]
-                current_city["maps_api_key"] = settings.MAPS_API_KEY
+                current_city = data['traveller']['current_city']
+                current_city['maps_api_key'] = settings.MAPS_API_KEY
                 memcache.set(key, current_city, 60*60*5)
             else:
                 current_city = None
