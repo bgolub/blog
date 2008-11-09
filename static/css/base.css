@@ -143,6 +143,10 @@ a.delete {
   margin-bottom: 3em;
 }
 
+.entry.full.permalink {
+  margin-bottom: 1em;
+}
+
 .entry.full h1 {
   font-size: 20pt;
 }

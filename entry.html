@@ -4,8 +4,7 @@
     {{ entry.title }} -
 {% endblock %}
 
-{% block above_entries %}
-{% endblock %}
+{% block entry_class %}{{ block.super }} permalink{% endblock %}
 
 {% block below_entries %}
     {% if previous or next %}
