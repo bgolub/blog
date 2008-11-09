@@ -49,7 +49,7 @@
         </div>
         {% if current_city %}
             <div class="box">
-                <a href="{{ current_city.url }}"><img src="http://maps.google.com/staticmap?zoom=12&size=250x150&maptype=mobile&markers={{ current_city.latitude }},{{ current_city.longitude }}&key={{ current_city.maps_api_key }}" title="{{ current_city.name }}, {{ current_city.region }}"/></a>
+                <a href="http://maps.google.com/maps?q={{ current_city.latitude }},{{ current_city.longitude }}{% filter urlencode %} ({{ current_city.name }} {{ current_city.region}}, {{ current_city.country_code }}){% endfilter %}"><img src="http://maps.google.com/staticmap?zoom=12&size=250x150&maptype=mobile&markers={{ current_city.latitude }},{{ current_city.longitude }}&key={{ current_city.maps_api_key }}" title="{{ current_city.name }}, {{ current_city.region }} {{ current_city.country_code }}"/></a>
             </div>
         {% endif %}
     </div>
