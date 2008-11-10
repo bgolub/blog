@@ -49,9 +49,8 @@ form {
 
 #logo {
   font-size: 16pt;
-  position: absolute;
-  left: 30px;
-  top: 15px;
+  padding-left: 30px;
+  padding-top: 15px;
 }
 
 #logo a,
