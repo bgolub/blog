@@ -1,5 +1,6 @@
 import functools
 import os
+import uuid
 
 from django.conf import settings
 settings._target = None
@@ -99,7 +100,7 @@ class BaseRequestHandler(webapp.RequestHandler):
             memcache.set(key, entries)
         return entries
 
-    def get_entry(self, slug):
+    def get_entry_from_slug(self, slug):
         key = 'entry/%s' % slug
         entry = memcache.get(key)
         if not entry:
@@ -187,7 +188,7 @@ class DeleteEntryHandler(BaseRequestHandler):
 
 class EntryPageHandler(BaseRequestHandler):
     def get(self, slug):
-        entry = self.get_entry(slug=slug)
+        entry = self.get_entry_from_slug(slug=slug)
         if not entry:
             return self.raise_error(404)
         extra_context = {
@@ -259,11 +260,14 @@ class NewEntryHandler(BaseRequestHandler):
                 except db.BadKeyError:
                     pass
             else:
+                slug = slugify(self.request.get('title'))
+                if self.get_entry_from_slug(slug=slug):
+                    slug += '-' + uuid.uuid4().hex[:4]
                 entry = Entry(
                     author=users.get_current_user(),
                     body=self.request.get('body'),
                     title=self.request.get('title'),
-                    slug=slugify(self.request.get('title')),
+                    slug=slug,
                     tags=self.get_tags_argument('tags'),
                 )
                 entry.put()
