@@ -229,3 +229,8 @@ pre {
   overflow: auto;
   margin: 2em;
 }
+
+#new textarea {
+    width: 600px;
+    height: 400px;
+}
