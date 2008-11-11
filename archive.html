@@ -1,0 +1,31 @@
+{% extends "entries.html" %}
+
+{% block title %}
+    Archive - 
+{% endblock %}
+
+{% block entry_class %}entry summary{% endblock %}
+
+{% block body %}
+    {% for entry in entries %}
+        <div class="entry summary">
+            <h1>
+                <a href="/e/{{ entry.slug }}">{{ entry.title }}</a>
+                <span class="date" title="{{ entry.published }}">
+                    - {{ entry.published|timesince }} ago
+                </span>
+            </h1>
+            <div class="body">
+                {{ entry.body|striptags|truncatewords:50 }}
+            </div>
+            {% if entry.tags %}
+                <div class="tags">
+                    {% for tag in entry.tags %}
+                        <a href="/t/{{ tag }}">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <a class="comments" href="/e/{{ entry.slug }}#disqus_thread">View comments</a>
+        </div>
+    {% endfor %}
+{% endblock %}
