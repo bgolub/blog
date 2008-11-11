@@ -4,7 +4,7 @@ How to Deploy:
 
 1) Get a Google App Engine account at http://appengine.google.com
 2) Create a new application.  Note your application identifier.
-3) Edit the include app.yaml.sample:
+3) Edit the included app.yaml.sample:
     i) Change the text APPLICATION_IDENTIFIER to the application identifier
     created in step 2.
     ii) Rename it to app.yaml
