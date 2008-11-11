@@ -11,11 +11,7 @@ How to Deploy:
 4) Edit the included settings.py.sample:
     i) Variables are self explanatory.
     ii) Rename it to settings.py
-5) Edit base.html to make it your own:
-    i) There are several instances of "Benjamin Golub", links to my FriendFeed,
-    and my email address peppered in the templates.  Until I move all of that
-    out into the settings you'll have to edit them by hand, sorry!
-    ii) Make sure to point Disqus to your account and not mine!
+5) Edit base.html to make it your own (optional).
 6) Deploy!
     i) Via command line:
         Move to the directory containing app.yaml and do "appcfg.py update ."

@@ -1,4 +1,1 @@
 TITLE = 'My Blog'
-SHOW_CURRENT_CITY = False
-DOPPLR_TOKEN = ""
-MAPS_API_KEY = ""

@@ -156,6 +156,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         extra_context['recent_entries'] = self.get_recent_entries()
         if SHOW_CURRENT_CITY:
             extra_context['current_city'] = self.get_current_city()
+        extra_context.update(settings._target.__dict__)
         path = os.path.join(os.path.dirname(__file__), template_file)
         self.response.out.write(template.render(path, extra_context))
 
