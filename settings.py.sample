@@ -1,1 +1,16 @@
 TITLE = 'My Blog'
+EMAIL = 'me@example.com'
+NAME = 'Me'
+LINKS = (
+    {
+        'url': 'http://friendfeed.com/', 
+        'value': ':)',
+    },
+)
+DISQUS = ''
+SHOW_CURRENT_CITY = False
+DOPPLR_TOKEN = ''
+MAPS_API_KEY = ''
+ANALYTICS = ''
+GOOGLE_TALK_BADGE = ''
+FRIENDFEED_NICKNAME = ''
