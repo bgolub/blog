@@ -1,0 +1,28 @@
+Source: http://github.com/bgolub/blog/tree/master
+
+How to Deploy:
+
+1) Get a Google App Engine account at http://appengine.google.com
+2) Create a new application.  Note your application identifier.
+3) Edit the include app.yaml.sample:
+    i) Change the text APPLICATION_IDENTIFIER to the application identifier
+    created in step 2.
+    ii) Rename it to app.yaml
+4) Edit the included settings.py.sample:
+    i) Variables are self explanatory.
+    ii) Rename it to settings.py
+5) Edit base.html to make it your own:
+    i) There are several instances of "Benjamin Golub", links to my FriendFeed,
+    and my email address peppered in the templates.  Until I move all of that
+    out into the settings you'll have to edit them by hand, sorry!
+    ii) Make sure to point Disqus to your account and not mine!
+6) Deploy!
+    i) Via command line:
+        Move to the directory containing app.yaml and do "appcfg.py update ."
+    ii) Via GoogleAppEngineLauncher (for Mac):
+        Drag the directory onto the window, click on the app, hit deploy!
+7) Start blogging by visiting http://your_blog_url/new
+    i) That will prompt you for your Google Account.  Login with the same one
+    you use to login to http://appengine.google.com.  Only that account can
+    add/edit/delete posts.
+7) Let me know that you're using it :)  bgolub@benjamingolub.com

@@ -22,6 +22,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 DOPPLR_TOKEN = getattr(settings, 'DOPPLR_TOKEN', None)
 MAPS_API_KEY = getattr(settings, 'MAPS_API_KEY', None)
 SHOW_CURRENT_CITY = getattr(settings, 'SHOW_CURRENT_CITY', False)
+TITLE = getattr(settings, 'TITLE', 'Blog')
 
 def admin(method):
     @functools.wraps(method)
@@ -131,9 +132,9 @@ class BaseRequestHandler(webapp.RequestHandler):
 
     def render_feed(self, entries):
         f = feedgenerator.Atom1Feed(
-            title='Benjamin Golub\'s Blog',
+            title=TITLE,
             link='http://' + self.request.host,
-            description='Benjamin Golub\'s Blog',
+            description=TITLE,
             language='en',
         )
         for entry in entries:
