@@ -23,6 +23,7 @@ DOPPLR_TOKEN = getattr(settings, 'DOPPLR_TOKEN', None)
 MAPS_API_KEY = getattr(settings, 'MAPS_API_KEY', None)
 SHOW_CURRENT_CITY = getattr(settings, 'SHOW_CURRENT_CITY', False)
 TITLE = getattr(settings, 'TITLE', 'Blog')
+OLD_WORDPRESS_BLOG = getattr(settings, 'OLD_WORDPRESS_BLOG', None)
 
 def admin(method):
     @functools.wraps(method)
@@ -281,8 +282,10 @@ class NotFoundHandler(BaseRequestHandler):
 
 class OldBlogRedirectHandler(BaseRequestHandler):
     def get(self, year, month, day, slug):
-        self.redirect('http://old.benjamingolub.com/%s/%s/%s/%s/' % 
-            (year, month, day, slug), permanent=True)
+        if not OLD_WORDPRESS_BLOG:
+           return self.raise_error(404) 
+        self.redirect('http://%s/%s/%s/%s/%s/' % 
+            (OLD_WORDPRESS_BLOG, year, month, day, slug), permanent=True)
 
 
 class TagPageHandler(BaseRequestHandler):
