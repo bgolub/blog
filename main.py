@@ -81,7 +81,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         entries = memcache.get(key)
         if not entries:
             entries = db.Query(Entry).order('-published').fetch(limit=5)
-            memcache.set(key, entries)
+            memcache.set(key, list(entries))
         return entries
 
     def get_main_page_entries(self):
@@ -89,7 +89,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         entries = memcache.get(key)
         if not entries:
             entries = db.Query(Entry).order('-published').fetch(limit=10)
-            memcache.set(key, entries)
+            memcache.set(key, list(entries))
         return entries
 
     def get_archive_entries(self):
@@ -97,7 +97,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         entries = memcache.get(key)
         if not entries:
             entries = db.Query(Entry).order('-published')
-            memcache.set(key, entries)
+            memcache.set(key, list(entries))
         return entries
 
     def get_entry_from_slug(self, slug):
@@ -114,7 +114,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         entries = memcache.get(key)
         if not entries:
             entries = db.Query(Entry).filter('tags =', tag).order('-published')
-            memcache.set(key, entries)
+            memcache.set(key, list(entries))
         return entries
 
     def kill_entries_cache(self, slug=None, tags=[]):
