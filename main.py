@@ -153,6 +153,9 @@ class BaseRequestHandler(webapp.RequestHandler):
 
 
     def render(self, template_file, extra_context={}):
+        if "entries" in extra_context and \
+            self.request.get('format', None) == 'atom':
+            return self.render_feed(extra_context["entries"])
         extra_context['request'] = self.request
         extra_context['admin'] = users.is_current_user_admin()
         extra_context['recent_entries'] = self.get_recent_entries()
@@ -214,8 +217,6 @@ class MainPageHandler(BaseRequestHandler):
             entries = db.Query(Entry).order('-published').fetch(limit=10, offset=offset)
         if not entries and offset > 0:
             return self.redirect('/')
-        if self.request.get('format', None) == 'atom':
-            return self.render_feed(entries)
         extra_context = {
             'entries': entries,
             'next': max(offset - 10, 0),

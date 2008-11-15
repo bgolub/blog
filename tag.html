@@ -4,6 +4,10 @@
     {{ tag }} -
 {% endblock %}
 
+{% block extra_head %}
+    <link rel="alternate" type="application/atom+xml" href="{{ request.path }}?format=atom" title="Entries tagged &quot;{{ tag }}&quot;"/>
+{% endblock %}
+
 {% block above_entries %}
     <div class="infomessage">
         Entries tagged <a href="/t/{{ tag }}">{{ tag }}</a>
