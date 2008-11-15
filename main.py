@@ -139,7 +139,7 @@ class BaseRequestHandler(webapp.RequestHandler):
             description=TITLE,
             language='en',
         )
-        for entry in entries:
+        for entry in entries[:10]:
             f.add_item(
                 title=entry.title,
                 link='/e/%s' % entry.slug,
