@@ -110,7 +110,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         return entry
 
     def get_tagged_entries(self, tag):
-        key = 'enries/tag/%s' % tag
+        key = 'entries/tag/%s' % tag
         entries = memcache.get(key)
         if not entries:
             entries = db.Query(Entry).filter('tags =', tag).order('-published')
@@ -124,7 +124,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         if slug:
             memcache.delete('entry/%s' % slug)
         for tag in tags:
-            memcache.delete('entry/tagged/%s' % tag)
+            memcache.delete('entries/tag/%s' % tag)
         
     def get_integer_argument(self, name, default):
         try:
