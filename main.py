@@ -221,6 +221,7 @@ class MainPageHandler(BaseRequestHandler):
             'entries': entries,
             'next': max(offset - 10, 0),
             'previous': offset + 10 if len(entries) == 10 else None,
+            'offset': offset,
         }
         self.render('main.html', extra_context)
 
