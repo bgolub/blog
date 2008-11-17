@@ -149,13 +149,31 @@ class BaseRequestHandler(webapp.RequestHandler):
                 categories=entry.tags,
             )
         data = f.writeString('utf-8')
+        self.response.headers["Content-Type"] = "application/atom+xml"
         self.response.out.write(data)
 
+    def render_json(self, entries):
+        json_entries = [{
+            "title": entry.title,
+            "slug": entry.slug,
+            "body": entry.body,
+            "author": entry.author.nickname(),
+            "published": entry.published.isoformat(),
+            "updated": entry.updated.isoformat(),
+            "tags": entry.tags,
+            "link": "http://" + self.request.host + "/e/" + entry.slug,
+        } for entry in entries]
+        json = {"entries": json_entries}
+        self.response.headers["Content-Type"] = "text/javascript"
+        self.response.out.write(simplejson.dumps(json))
 
     def render(self, template_file, extra_context={}):
-        if "entries" in extra_context and \
-            self.request.get('format', None) == 'atom':
-            return self.render_feed(extra_context["entries"])
+        if "entries" in extra_context:
+            format = self.request.get('format', None)
+            if format == 'atom':
+                return self.render_feed(extra_context["entries"])
+            elif format == 'json':
+                return self.render_json(extra_context["entries"])
         extra_context['request'] = self.request
         extra_context['admin'] = users.is_current_user_admin()
         extra_context['recent_entries'] = self.get_recent_entries()
