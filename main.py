@@ -162,6 +162,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         if SHOW_CURRENT_CITY:
             extra_context['current_city'] = self.get_current_city()
         extra_context.update(settings._target.__dict__)
+        template_file = "templates/%s" % template_file
         path = os.path.join(os.path.dirname(__file__), template_file)
         self.response.out.write(template.render(path, extra_context))
 
