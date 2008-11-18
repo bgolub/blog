@@ -1,6 +1,7 @@
 import functools
 import os
 import uuid
+import urllib
 
 from django.conf import settings
 settings._target = None
@@ -187,6 +188,15 @@ class BaseRequestHandler(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), template_file)
         self.response.out.write(template.render(path, extra_context))
 
+    def ping(self, entry=None):
+        args = urllib.urlencode({
+            "name": TITLE,
+            "url": "http://" + self.request.host + "/",
+            "changesURL": "http://" + self.request.host + "/?format=atom",
+        })
+        response = urlfetch.fetch('http://blogsearch.google.com/ping?' + args)
+        return response.status_code
+
 
 class ArchivePageHandler(BaseRequestHandler):
     def get(self):
@@ -301,6 +311,7 @@ class NewEntryHandler(BaseRequestHandler):
                 )
                 entry.put()
                 self.kill_entries_cache(tags=entry.tags)
+                self.ping(entry)
                 return self.redirect('/e/' + entry.slug)
         extra_context = {
             'form': form,
