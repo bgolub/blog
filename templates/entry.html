@@ -6,6 +6,14 @@
 
 {% block entry_class %}{{ block.super }} permalink{% endblock %}
 
+{% block above_entries %}
+    {% if invalid %}
+        <p>
+            <a style="color: red; font-weight: bold;" href="http://validator.w3.org/check?url={% filter urlencode %}http://{{ request.host }}/e/{{ entry.slug}}{% endfilter %}">Invalid XHTML!</a>
+        </p>
+    {% endif %}
+{% endblock %}
+
 {% block below_entries %}
     {% if previous or next %}
         <div class="navigation">

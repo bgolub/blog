@@ -197,6 +197,14 @@ class BaseRequestHandler(webapp.RequestHandler):
         response = urlfetch.fetch("http://blogsearch.google.com/ping?" + args)
         return response.status_code
 
+    def is_valid_xhtml(self, entry):
+        args = urllib.urlencode({
+            "uri": "http://" + self.request.host + "/e/" + entry.slug, 
+        })
+        response = urlfetch.fetch("http://validator.w3.org/check?" + args,
+            method=urlfetch.HEAD)
+        return response.headers["X-W3C-Validator-Status"] == "Valid"
+
 
 class ArchivePageHandler(BaseRequestHandler):
     def get(self):
@@ -236,6 +244,7 @@ class EntryPageHandler(BaseRequestHandler):
             "entry": entry, # To easily pull out the title
             "previous": db.Query(Entry).filter("published <", entry.published).order("-published").get(),
             "next": db.Query(Entry).filter("published >", entry.published).order("published").get(),
+            "invalid": self.request.get("invalid", False),
         }
         self.render("entry.html", extra_context)
 
@@ -295,6 +304,8 @@ class NewEntryHandler(BaseRequestHandler):
                     entry.tags = self.get_tags_argument("tags")
                     entry.put()
                     self.kill_entries_cache(slug=entry.slug, tags=entry.tags)
+                    if not self.is_valid_xhtml(entry):
+                        return self.redirect("/e/" + entry.slug + "?invalid=1")
                     return self.redirect("/e/" + entry.slug)
                 except db.BadKeyError:
                     pass
@@ -312,6 +323,8 @@ class NewEntryHandler(BaseRequestHandler):
                 entry.put()
                 self.kill_entries_cache(tags=entry.tags)
                 self.ping(entry)
+                if not self.is_valid_xhtml(entry):
+                    return self.redirect("/e/" + entry.slug + "?invalid=1")
                 return self.redirect("/e/" + entry.slug)
         extra_context = {
             "form": form,
