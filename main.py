@@ -58,6 +58,9 @@ class EntryForm(djangoforms.ModelForm):
 
 
 class BaseRequestHandler(webapp.RequestHandler):
+    def head(self):
+        pass
+
     def raise_error(self, code):
         self.error(code)
         self.render('%i.html' % code)
@@ -135,7 +138,7 @@ class BaseRequestHandler(webapp.RequestHandler):
     def render_feed(self, entries):
         f = feedgenerator.Atom1Feed(
             title=TITLE,
-            link='http://' + self.request.host,
+            link='http://' + self.request.host + "/",
             description=TITLE,
             language='en',
         )
@@ -205,10 +208,15 @@ class DeleteEntryHandler(BaseRequestHandler):
         except db.BadKeyError:
             data = {'success': False}
         json = simplejson.dumps(data)
-        return self.response.out.write(json)
+        self.response.out.write(json)
 
 
 class EntryPageHandler(BaseRequestHandler):
+    def head(self, slug):
+        entry = self.get_entry_from_slug(slug=slug)
+        if not entry:
+            self.error(404)
+
     def get(self, slug):
         entry = self.get_entry_from_slug(slug=slug)
         if not entry:
@@ -224,7 +232,7 @@ class EntryPageHandler(BaseRequestHandler):
 
 class FeedRedirectHandler(BaseRequestHandler):
     def get(self):
-        return self.redirect('/?format=atom', permanent=True)
+        self.redirect('/?format=atom', permanent=True)
 
 
 class MainPageHandler(BaseRequestHandler):
@@ -301,8 +309,11 @@ class NewEntryHandler(BaseRequestHandler):
 
 
 class NotFoundHandler(BaseRequestHandler):
+    def head(self):
+        self.error(404)
+
     def get(self):
-        return self.raise_error(404)
+        self.raise_error(404)
 
 
 class OldBlogRedirectHandler(BaseRequestHandler):
