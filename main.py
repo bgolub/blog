@@ -146,7 +146,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         for entry in entries[:10]:
             f.add_item(
                 title=entry.title,
-                link="/e/%s" % entry.slug,
+                link=self.entry_link(entry),
                 description=entry.body,
                 author_name=entry.author.nickname(),
                 pubdate=entry.published,
@@ -165,7 +165,7 @@ class BaseRequestHandler(webapp.RequestHandler):
             "published": entry.published.isoformat(),
             "updated": entry.updated.isoformat(),
             "tags": entry.tags,
-            "link": "http://" + self.request.host + "/e/" + entry.slug,
+            "link": self.entry_link(entry, permalink=True),
         } for entry in entries]
         json = {"entries": json_entries}
         self.response.headers["Content-Type"] = "text/javascript"
@@ -199,11 +199,19 @@ class BaseRequestHandler(webapp.RequestHandler):
 
     def is_valid_xhtml(self, entry):
         args = urllib.urlencode({
-            "uri": "http://" + self.request.host + "/e/" + entry.slug, 
+            "uri": self.entry_link(entry, permalink=True),
         })
         response = urlfetch.fetch("http://validator.w3.org/check?" + args,
             method=urlfetch.HEAD)
         return response.headers["X-W3C-Validator-Status"] == "Valid"
+
+    def entry_link(self, entry, query_args={}, permalink=False):
+        url = "/e/" + entry.slug
+        if permalink:
+            url = "http://" + self.request.host + url
+        if query_args:
+            url += "?" + urllib.urlencode(query_args)
+        return url
 
 
 class ArchivePageHandler(BaseRequestHandler):
@@ -299,16 +307,10 @@ class NewEntryHandler(BaseRequestHandler):
             if key:
                 try:
                     entry = db.get(key)
-                    entry.body = self.request.get("body")
-                    entry.title = self.request.get("title")
-                    entry.tags = self.get_tags_argument("tags")
-                    entry.put()
-                    self.kill_entries_cache(slug=entry.slug, tags=entry.tags)
-                    if not self.is_valid_xhtml(entry):
-                        return self.redirect("/e/" + entry.slug + "?invalid=1")
-                    return self.redirect("/e/" + entry.slug)
                 except db.BadKeyError:
-                    pass
+                    return self.raise_error(404)
+                entry.title = self.request.get("title")
+                entry.body = self.request.get("body")
             else:
                 slug = slugify(self.request.get("title"))
                 if self.get_entry_from_slug(slug=slug):
@@ -318,14 +320,16 @@ class NewEntryHandler(BaseRequestHandler):
                     body=self.request.get("body"),
                     title=self.request.get("title"),
                     slug=slug,
-                    tags=self.get_tags_argument("tags"),
                 )
-                entry.put()
-                self.kill_entries_cache(tags=entry.tags)
+            entry.tags = self.get_tags_argument("tags")
+            entry.put()
+            self.kill_entries_cache(slug=entry.slug if key else None,
+                tags=entry.tags)
+            if not key:
                 self.ping(entry)
-                if not self.is_valid_xhtml(entry):
-                    return self.redirect("/e/" + entry.slug + "?invalid=1")
-                return self.redirect("/e/" + entry.slug)
+            valid = self.is_valid_xhtml(entry)
+            return self.redirect(self.entry_link(entry,
+                query_args={"invalid": 1} if not valid else {}))
         extra_context = {
             "form": form,
         }
