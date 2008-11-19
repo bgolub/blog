@@ -222,12 +222,17 @@ ul li {
   margin-bottom: 0.3em;
 }
 
-pre {
+pre, 
+blockquote {
   border: 1px solid silver;
   background-color: #f5f5f5;
   padding: 0.5em;
-  overflow: auto;
   margin: 2em;
+}
+
+pre {
+  overflow: auto;
+  color: #007000;
 }
 
 #new textarea {
