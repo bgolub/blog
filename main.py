@@ -27,6 +27,8 @@ SHOW_CURRENT_CITY = getattr(settings, "SHOW_CURRENT_CITY", False)
 TITLE = getattr(settings, "TITLE", "Blog")
 OLD_WORDPRESS_BLOG = getattr(settings, "OLD_WORDPRESS_BLOG", None)
 
+webapp.template.register_template_library("filters")
+
 def admin(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):

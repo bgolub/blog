@@ -40,7 +40,7 @@
                 <div class="entry summary">
                     <a href="/e/{{ entry.slug }}">{{ entry.title }}</a>
                     <span class="date" title="{{ entry.published }}">
-                        - {{ entry.published|timesince }} ago
+                        - {{ entry.published|bettertimesince }}
                     </span>
                 </div>
             {% endfor %}
