@@ -9,7 +9,7 @@ UTC_OFFSET = getattr(settings, "UTC_OFFSET", 0)
 
 def bettertimesince(dt):
     delta = datetime.datetime.utcnow() - dt
-    local_dt = dt - datetime.timedelta(hours=UTC_OFFSET)
+    local_dt = dt + datetime.timedelta(hours=UTC_OFFSET)
     if delta.days == 0:
         return timesince(dt) + " ago"
     elif delta.days == 1:
