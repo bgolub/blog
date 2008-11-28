@@ -148,7 +148,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         for entry in entries[:10]:
             f.add_item(
                 title=entry.title,
-                link=self.entry_link(entry),
+                link=self.entry_link(entry, permalink=True),
                 description=entry.body,
                 author_name=entry.author.nickname(),
                 pubdate=entry.published,
