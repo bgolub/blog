@@ -1,4 +1,5 @@
 import BeautifulSoup
+import feedgenerator
 import functools
 import os
 import uuid
@@ -10,7 +11,6 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
 from django import newforms as forms
 from django.template.defaultfilters import slugify
-from django.utils import feedgenerator
 from django.utils import simplejson
 from django.utils.feedgenerator import Enclosure
 
@@ -44,6 +44,24 @@ def admin(method):
         else:
             return method(self, *args, **kwargs)
     return wrapper
+
+
+class MediaRSSFeed(feedgenerator.Atom1Feed):
+    def root_attributes(self):
+        attrs = super(MediaRSSFeed, self).root_attributes()
+        attrs["xmlns:media"] = "http://search.yahoo.com/mrss/"
+        return attrs
+
+    def add_item_elements(self, handler, item):
+        super(MediaRSSFeed, self).add_item_elements(handler, item)
+        self.add_thumbnail_element(handler, item)
+
+    def add_thumbnail_element(self, handler, item):
+        thumbnail = item.get("thumbnail", None)
+        if thumbnail:
+            handler.addQuickElement("media:thumbnail", "", {
+                "url": thumbnail["url"],
+            })
 
 
 class Entry(db.Model):
@@ -160,9 +178,16 @@ class BaseRequestHandler(webapp.RequestHandler):
                     headers["Content-Type"])
                 return enclosure
         return None
+
+    def find_thumbnail(self, html):
+        soup = BeautifulSoup.BeautifulSoup(html)
+        img = soup.find("img")
+        if img:
+            return {"url": img["src"]}
+        return None
             
     def render_feed(self, entries):
-        f = feedgenerator.Atom1Feed(
+        f = MediaRSSFeed(
             title=TITLE,
             link="http://" + self.request.host + "/",
             description=TITLE,
@@ -176,7 +201,7 @@ class BaseRequestHandler(webapp.RequestHandler):
                 author_name=entry.author.nickname(),
                 pubdate=entry.published,
                 categories=entry.tags,
-                enclosure=self.find_enclosure(entry.body),
+                thumbnail=self.find_thumbnail(entry.body),
             )
         data = f.writeString("utf-8")
         self.response.headers["Content-Type"] = "application/atom+xml"
