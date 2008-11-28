@@ -1,3 +1,4 @@
+import BeautifulSoup
 import functools
 import os
 import uuid
@@ -11,6 +12,7 @@ from django import newforms as forms
 from django.template.defaultfilters import slugify
 from django.utils import feedgenerator
 from django.utils import simplejson
+from django.utils.feedgenerator import Enclosure
 
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
@@ -138,6 +140,27 @@ class BaseRequestHandler(webapp.RequestHandler):
         except (TypeError, ValueError):
             return default
 
+    def fetch_headers(self, url):
+        key = "headers/" + url
+        headers = memcache.get(key)
+        if not headers:
+            response = urlfetch.fetch(url, method=urlfetch.HEAD)
+            if response.status_code == 200:
+                headers = response.headers
+                memcache.set(key, headers)
+        return headers
+
+    def find_enclosure(self, html):
+        soup = BeautifulSoup.BeautifulSoup(html)
+        img = soup.find("img")
+        if img:
+            headers = self.fetch_headers(img["src"])
+            if headers:
+                enclosure = Enclosure(img["src"], headers["Content-Length"],
+                    headers["Content-Type"])
+                return enclosure
+        return None
+            
     def render_feed(self, entries):
         f = feedgenerator.Atom1Feed(
             title=TITLE,
@@ -153,6 +176,7 @@ class BaseRequestHandler(webapp.RequestHandler):
                 author_name=entry.author.nickname(),
                 pubdate=entry.published,
                 categories=entry.tags,
+                enclosure=self.find_enclosure(entry.body),
             )
         data = f.writeString("utf-8")
         self.response.headers["Content-Type"] = "application/atom+xml"
