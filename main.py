@@ -148,7 +148,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         for entry in entries[:10]:
             f.add_item(
                 title=entry.title,
-                link=self.entry_link(entry, permalink=True),
+                link=self.entry_link(entry, absolute=True),
                 description=entry.body,
                 author_name=entry.author.nickname(),
                 pubdate=entry.published,
@@ -167,7 +167,7 @@ class BaseRequestHandler(webapp.RequestHandler):
             "published": entry.published.isoformat(),
             "updated": entry.updated.isoformat(),
             "tags": entry.tags,
-            "link": self.entry_link(entry, permalink=True),
+            "link": self.entry_link(entry, absolute=True),
         } for entry in entries]
         json = {"entries": json_entries}
         self.response.headers["Content-Type"] = "text/javascript"
@@ -202,15 +202,15 @@ class BaseRequestHandler(webapp.RequestHandler):
 
     def is_valid_xhtml(self, entry):
         args = urllib.urlencode({
-            "uri": self.entry_link(entry, permalink=True),
+            "uri": self.entry_link(entry, absolute=True),
         })
         response = urlfetch.fetch("http://validator.w3.org/check?" + args,
             method=urlfetch.HEAD)
         return response.headers["X-W3C-Validator-Status"] == "Valid"
 
-    def entry_link(self, entry, query_args={}, permalink=False):
+    def entry_link(self, entry, query_args={}, absolute=False):
         url = "/e/" + entry.slug
-        if permalink:
+        if absolute:
             url = "http://" + self.request.host + url
         if query_args:
             url += "?" + urllib.urlencode(query_args)
