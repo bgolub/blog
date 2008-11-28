@@ -171,7 +171,8 @@ class BaseRequestHandler(webapp.RequestHandler):
         } for entry in entries]
         json = {"entries": json_entries}
         self.response.headers["Content-Type"] = "text/javascript"
-        self.response.out.write(simplejson.dumps(json))
+        self.response.out.write(simplejson.dumps(json, sort_keys=True, 
+            indent=4 if self.request.get("pretty", False) else None))
 
     def render(self, template_file, extra_context={}):
         if "entries" in extra_context:
