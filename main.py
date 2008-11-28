@@ -135,7 +135,7 @@ class BaseRequestHandler(webapp.RequestHandler):
     def get_integer_argument(self, name, default):
         try:
             return int(self.request.get(name, default))
-        except ValueError:
+        except (TypeError, ValueError):
             return default
 
     def render_feed(self, entries):
