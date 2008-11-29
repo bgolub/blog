@@ -14,7 +14,10 @@
             <tr>
                 <th></th>
                 <td>
-                    <input type="submit" value="Post"/>
+                    <div style="margin-top: 1em;">
+                        <input type="submit" value="{% block submit_value %}Post{% endblock %}"/>
+                        <a style="margin-left: .5em;" href="{% block cancel_link %}/{% endblock %}">Cancel</a>
+                    </div>
                 </td>
             </tr>
         </table>

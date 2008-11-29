@@ -345,20 +345,23 @@ class NewEntryHandler(BaseRequestHandler):
         if key:
             try:
                 entry = db.get(key)
+                extra_context["entry"] = entry
                 extra_context["tags"] = ", ".join(entry.tags)
                 form = EntryForm(instance=entry)
             except db.BadKeyError:
                 return self.redirect("/new")
         extra_context["form"] = form
-        self.render("new.html", extra_context)
+        self.render("edit.html" if key else "new.html", extra_context)
 
     @admin
     def post(self, key=None):
+        extra_context = {}
         form = EntryForm(data=self.request.POST)
         if form.is_valid():
             if key:
                 try:
                     entry = db.get(key)
+                    extra_context["entry"] = entry
                 except db.BadKeyError:
                     return self.raise_error(404)
                 entry.title = self.request.get("title")
@@ -382,10 +385,8 @@ class NewEntryHandler(BaseRequestHandler):
             valid = self.is_valid_xhtml(entry)
             return self.redirect(self.entry_link(entry,
                 query_args={"invalid": 1} if not valid else {}))
-        extra_context = {
-            "form": form,
-        }
-        self.render("new.html", extra_context)
+        extra_context["form"] = form
+        self.render("edit.html" if key else "new.html", extra_context)
 
 
 class NotFoundHandler(BaseRequestHandler):
