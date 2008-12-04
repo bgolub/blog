@@ -61,6 +61,9 @@ class MediaRSSFeed(feedgenerator.Atom1Feed):
     def add_thumbnail_element(self, handler, item):
         thumbnail = item.get("thumbnail", None)
         if thumbnail:
+            title = thumbnail.get("title", None)
+            if title:
+                handler.addQuickElement("media:title", title)
             handler.addQuickElement("media:thumbnail", "", {
                 "url": thumbnail["url"],
             })
@@ -185,7 +188,10 @@ class BaseRequestHandler(webapp.RequestHandler):
         soup = BeautifulSoup.BeautifulSoup(html)
         img = soup.find("img")
         if img:
-            return {"url": img["src"]}
+            return {
+                "url": img["src"],
+                "title": img.get("title", img.get("alt", None)),
+            }
         return None
 
     def generate_sup_id(self, url=None):
