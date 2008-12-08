@@ -441,6 +441,12 @@ class TagPageHandler(BaseRequestHandler):
         self.render("tag.html", extra_context)
 
 
+class OpenSearchHandler(BaseRequestHandler):
+    def get(self):
+        self.response.headers["Content-Type"] = "application/xml"
+        self.render("opensearch.xml")
+
+
 application = webapp.WSGIApplication([
     ("/", MainPageHandler),
     ("/archive/?", ArchivePageHandler),
@@ -451,6 +457,7 @@ application = webapp.WSGIApplication([
     ("/t/([\w-]+)/?", TagPageHandler),
     ("/(\d+)/(\d+)/(\d+)/([\w-]+)/?", OldBlogRedirectHandler),
     ("/feed/?", FeedRedirectHandler),
+    ("/opensearch.xml/?", OpenSearchHandler),
     ("/.*", NotFoundHandler),
 ], debug=True)
 
