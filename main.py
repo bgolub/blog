@@ -56,17 +56,25 @@ class MediaRSSFeed(feedgenerator.Atom1Feed):
 
     def add_item_elements(self, handler, item):
         super(MediaRSSFeed, self).add_item_elements(handler, item)
-        self.add_thumbnail_element(handler, item)
+        self.add_thumbnails_element(handler, item)
 
     def add_thumbnail_element(self, handler, item):
         thumbnail = item.get("thumbnail", None)
         if thumbnail:
-            title = thumbnail.get("title", None)
-            if title:
+            if thumbnail["title"]:
                 handler.addQuickElement("media:title", title)
             handler.addQuickElement("media:thumbnail", "", {
                 "url": thumbnail["url"],
             })
+
+    def add_thumbnails_element(self, handler, item):
+        thumbnails = item.get("thumbnails", None)
+        for thumbnail in thumbnails:
+            handler.startElement("media:group", {})
+            if thumbnail["title"]:
+                handler.addQuickElement("media:title", thumbnail["title"])
+            handler.addQuickElement("media:thumbnail", "", thumbnail)
+            handler.endElement("media:group")
 
 
 class Entry(db.Model):
@@ -184,15 +192,20 @@ class BaseRequestHandler(webapp.RequestHandler):
                 return enclosure
         return None
 
-    def find_thumbnail(self, html):
+    def find_thumbnails(self, html):
         soup = BeautifulSoup.BeautifulSoup(html)
-        img = soup.find("img")
-        if img:
-            return {
+        imgs = soup.findAll("img")
+        thumbnails = []
+        for img in imgs:
+            if "nomediarss" in img.get("class", "").split():
+                continue
+            thumbnails.append({
                 "url": img["src"],
-                "title": img.get("title", img.get("alt", None)),
-            }
-        return None
+                "title": img.get("title", img.get("alt", "")),
+                "width": img.get("width", ""),
+                "height": img.get("height", ""),
+            })
+        return thumbnails
 
     def generate_sup_id(self, url=None):
         return hashlib.md5(url or self.request.url).hexdigest()[:10]
@@ -217,7 +230,7 @@ class BaseRequestHandler(webapp.RequestHandler):
                 author_name=entry.author.nickname(),
                 pubdate=entry.published,
                 categories=entry.tags,
-                thumbnail=self.find_thumbnail(entry.body),
+                thumbnails=self.find_thumbnails(entry.body),
             )
         data = f.writeString("utf-8")
         self.response.headers["Content-Type"] = "application/atom+xml"
