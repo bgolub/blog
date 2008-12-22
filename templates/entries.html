@@ -27,7 +27,9 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <a class="comments" href="/e/{{ entry.slug }}#disqus_thread">View comments</a>
+            {% if DISQUS %}
+                <a class="comments" href="/e/{{ entry.slug }}#disqus_thread">View comments</a>
+            {% endif %}
         </div>
     {% endfor %}
     {% block below_entries %}{% endblock %}
