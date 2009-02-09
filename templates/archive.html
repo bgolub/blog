@@ -16,7 +16,7 @@
                 </span>
             </h1>
             <div class="body">
-                {{ entry.body|striptags|truncatewords:50 }}
+                {{ entry.body|striptags|truncatewords:20 }}
             </div>
             {% if entry.tags %}
                 <div class="tags">
@@ -24,9 +24,6 @@
                         <a href="/t/{{ tag }}">{{ tag }}</a>
                     {% endfor %}
                 </div>
-            {% endif %}
-            {% if DISQUS %}
-                <a class="comments" href="/e/{{ entry.slug }}#disqus_thread">View comments</a>
             {% endif %}
         </div>
     {% endfor %}
