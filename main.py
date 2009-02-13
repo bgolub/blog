@@ -30,6 +30,10 @@ MAPS_API_KEY = getattr(settings, "MAPS_API_KEY", None)
 SHOW_CURRENT_CITY = getattr(settings, "SHOW_CURRENT_CITY", False)
 TITLE = getattr(settings, "TITLE", "Blog")
 OLD_WORDPRESS_BLOG = getattr(settings, "OLD_WORDPRESS_BLOG", None)
+NUM_RECENT = getattr(settings, "NUM_RECENT", 5)
+NUM_MAIN = getattr(settings, "NUM_MAIN", 10)
+NUM_FLICKR = getattr(settings, "NUM_FLICKR", 1)
+FLICKR_ID = getattr(settings, "FLICKR_ID", None)
 
 webapp.template.register_template_library("filters")
 
@@ -115,19 +119,19 @@ class BaseRequestHandler(webapp.RequestHandler):
                 current_city = None
         return current_city
 
-    def get_recent_entries(self):
-        key = "entries/recent"
+    def get_recent_entries(self, num=NUM_RECENT):
+        key = "entries/recent/%d" % num
         entries = memcache.get(key)
         if not entries:
-            entries = db.Query(Entry).order("-published").fetch(limit=5)
+            entries = db.Query(Entry).order("-published").fetch(limit=num)
             memcache.set(key, list(entries))
         return entries
 
-    def get_main_page_entries(self):
-        key = "entries/main"
+    def get_main_page_entries(self, num=NUM_MAIN):
+        key = "entries/main/%d" % num
         entries = memcache.get(key)
         if not entries:
-            entries = db.Query(Entry).order("-published").fetch(limit=10)
+            entries = db.Query(Entry).order("-published").fetch(limit=num)
             memcache.set(key, list(entries))
         return entries
 
@@ -265,6 +269,7 @@ class BaseRequestHandler(webapp.RequestHandler):
         extra_context["recent_entries"] = self.get_recent_entries()
         if SHOW_CURRENT_CITY:
             extra_context["current_city"] = self.get_current_city()
+        extra_context["flickr_feed"] = self.get_flickr_feed()
         extra_context.update(settings._target.__dict__)
         template_file = "templates/%s" % template_file
         path = os.path.join(os.path.dirname(__file__), template_file)
@@ -300,6 +305,32 @@ class BaseRequestHandler(webapp.RequestHandler):
         if query_args:
             url += "?" + urllib.urlencode(query_args)
         return url
+
+    def get_flickr_feed(self):
+        if not FLICKR_ID:
+            return {}
+        key = "flickr_feed"
+        flickr_feed = memcache.get(key)
+        if not flickr_feed:
+            args = urllib.urlencode({
+                "id": FLICKR_ID,
+                "format": "json",
+                "nojsoncallback": 1,
+            })
+            response = urlfetch.fetch(
+                "http://api.flickr.com/services/feeds/photos_public.gne?" + \
+                args)
+            if response.status_code == 200:
+                try:
+                    flickr_feed = simplejson.loads(response.content)
+                    memcache.set(key, flickr_feed, 60*5)
+                except ValueError:
+                    flickr_feed = {}
+            else:
+                flickr_feed = {}
+        # Slice here to avoid doing it in the template
+        flickr_feed["items"] = flickr_feed.get("items", [])[:NUM_FLICKR]
+        return flickr_feed
 
 
 class ArchivePageHandler(BaseRequestHandler):
@@ -360,13 +391,14 @@ class MainPageHandler(BaseRequestHandler):
         if not offset:
             entries = self.get_main_page_entries()
         else:
-            entries = db.Query(Entry).order("-published").fetch(limit=10, offset=offset)
+            entries = db.Query(Entry).order("-published").fetch(limit=NUM_MAIN,
+                offset=offset)
         if not entries and offset > 0:
             return self.redirect("/")
         extra_context = {
             "entries": entries,
-            "next": max(offset - 10, 0),
-            "previous": offset + 10 if len(entries) == 10 else None,
+            "next": max(offset - NUM_MAIN, 0),
+            "previous": offset + NUM_MAIN if len(entries) == NUM_MAIN else None,
             "offset": offset,
         }
         self.render("main.html", extra_context)
