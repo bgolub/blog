@@ -57,7 +57,7 @@
         {% if flickr_feed.items %}
             <div class="box">
                 {% for item in flickr_feed.items %}
-                    <a href="{{ item.link }}"/><img src="{{ item.media.m }}" title="{{ item.title }}" alt="{{ item.title }}"/></a>
+                    <a href="{{ item.link }}"><img src="{{ item.media.m }}" title="{{ item.title }}" alt="{{ item.title }}"/></a>
                 {% endfor %}
             </div>
         {% endif %}

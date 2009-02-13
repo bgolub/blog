@@ -161,8 +161,8 @@ class BaseRequestHandler(webapp.RequestHandler):
         return entries
 
     def kill_entries_cache(self, slug=None, tags=[]):
-        memcache.delete("entries/recent")
-        memcache.delete("entries/main")
+        memcache.delete("entries/recent/%d" % NUM_RECENT)
+        memcache.delete("entries/main/%d" % NUM_MAIN)
         memcache.delete("entries/archive")
         if slug:
             memcache.delete("entry/%s" % slug)
