@@ -1,4 +1,5 @@
 import BeautifulSoup
+import demjson
 import feedgenerator
 import functools
 import hashlib
@@ -327,7 +328,7 @@ class BaseRequestHandler(webapp.RequestHandler):
                 args)
             if response.status_code == 200:
                 try:
-                    flickr_feed = simplejson.loads(response.content)
+                    flickr_feed = demjson.decode(response.content)
                     memcache.set(key, flickr_feed, 60*5)
                 except ValueError:
                     flickr_feed = {}
