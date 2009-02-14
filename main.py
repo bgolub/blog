@@ -289,6 +289,11 @@ class BaseRequestHandler(webapp.RequestHandler):
         })
         response = urlfetch.fetch("http://friendfeed.com/api/public-sup-ping?" \
             + args)
+        args = urllib.urlencode({
+            "bloglink": "http://" + self.request.host + "/",
+        })
+        response = urlfetch.fetch("http://www.feedburner.com/fb/a/pingSubmit?" \
+            + args)
 
     def is_valid_xhtml(self, entry):
         args = urllib.urlencode({
