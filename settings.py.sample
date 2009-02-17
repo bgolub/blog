@@ -1,3 +1,8 @@
+import os
+
+TEMPLATE_DIRS = (
+    os.path.dirname(__file__) + "/templates",
+)
 TITLE = "My Blog"
 EMAIL = "me@example.com"
 NAME = "Me"
