@@ -454,7 +454,7 @@ class NewEntryHandler(BaseRequestHandler):
                 entry.title = self.request.get("title")
                 entry.body = self.request.get("body")
             else:
-                slug = slugify(self.request.get("title"))
+                slug = str(slugify(self.request.get("title")))
                 if self.get_entry_from_slug(slug=slug):
                     slug += "-" + uuid.uuid4().hex[:4]
                 entry = Entry(
