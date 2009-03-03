@@ -1,30 +1,21 @@
 import BeautifulSoup
 import demjson
+import feedgenerator
 import functools
 import hashlib
 import logging
 import os
-import sys
 import uuid
 import urllib
-
-# Remove the standard version of Django.
-for k in [k for k in sys.modules if k.startswith('django')]:
-    del sys.modules[k]
-
-# Import Django from a zipfile if we don't have it on our path.
-if "django" not in os.listdir(os.path.abspath(os.path.dirname(__file__))):
-    sys.path.insert(0, os.path.abspath('django.zip'))
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from django.conf import settings
 settings._target = None
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
-from django import forms
+from django import newforms as forms
 from django.template.defaultfilters import slugify
-from django.utils import feedgenerator
 from django.utils import simplejson
+from django.utils.feedgenerator import Enclosure
 
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
@@ -82,7 +73,7 @@ class MediaRSSFeed(feedgenerator.Atom1Feed):
             })
 
     def add_thumbnails_element(self, handler, item):
-        thumbnails = item.get("thumbnails", [])
+        thumbnails = item.get("thumbnails", None)
         for thumbnail in thumbnails:
             handler.startElement("media:group", {})
             if thumbnail["title"]:
@@ -201,8 +192,8 @@ class BaseRequestHandler(webapp.RequestHandler):
         if img:
             headers = self.fetch_headers(img["src"])
             if headers:
-                enclosure = feedgerator.Enclosure(img["src"],
-                    headers["Content-Length"], headers["Content-Type"])
+                enclosure = Enclosure(img["src"], headers["Content-Length"],
+                    headers["Content-Type"])
                 return enclosure
         return None
 
@@ -522,7 +513,7 @@ application = webapp.WSGIApplication([
 ], debug=True)
 
 def main():
-    logging.getLogger().setLevel(logging.ERROR)
+    logging.getLogger().setLevel(logging.DEBUG)
     run_wsgi_app(application)
 
 if __name__ == "__main__":
