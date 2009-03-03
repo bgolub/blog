@@ -73,7 +73,7 @@ class MediaRSSFeed(feedgenerator.Atom1Feed):
             })
 
     def add_thumbnails_element(self, handler, item):
-        thumbnails = item.get("thumbnails", None)
+        thumbnails = item.get("thumbnails", [])
         for thumbnail in thumbnails:
             handler.startElement("media:group", {})
             if thumbnail["title"]:
