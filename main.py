@@ -12,7 +12,6 @@ from django.conf import settings
 settings._target = None
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
-from django import newforms as forms
 from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.feedgenerator import Enclosure
