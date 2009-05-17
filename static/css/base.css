@@ -41,6 +41,10 @@ form {
   padding: 0;
 }
 
+table td {
+  vertical-align: top;
+}
+
 #header {
   background-color: #bed7f5;
   height: 56px;
@@ -75,14 +79,12 @@ form {
 }
 
 #body {
-  margin: 30px;
-  max-width: 650px;
+  width: 100%;
+  padding: 30px;
 }
 
 #sidebar {
-  margin: 30px;
-  position: absolute;
-  right: 0;
+  padding: 30px;
   width: 250px;
 }
 
