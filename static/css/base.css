@@ -36,11 +36,6 @@ a:visited {
   color: #0000cc;
 }
 
-form {
-  margin: 0;
-  padding: 0;
-}
-
 table td {
   vertical-align: top;
 }
@@ -48,13 +43,13 @@ table td {
 #header {
   background-color: #bed7f5;
   height: 56px;
+  line-height: 56px;
   position: relative;
 }
 
 #logo {
+  margin-left: 30px;
   font-size: 16pt;
-  padding-left: 30px;
-  padding-top: 15px;
 }
 
 #logo a,
@@ -69,27 +64,62 @@ table td {
 
 #search {
   position: absolute;
-  top: 16px;
+  top: 0px;
   right: 30px;
 }
 
 #search input {
-  font-family: Arial, sans-serif;
   font-size: 10pt;
 }
 
 #body {
   width: 100%;
-  padding: 30px;
 }
 
 #sidebar {
-  padding: 30px;
   width: 250px;
+}
+
+#body,
+#sidebar {
+  padding: 30px;
 }
 
 #sidebar .box {
   margin-bottom: 1em;
+}
+
+#sidebar .box h3 {
+  font-size: 12pt;
+  margin-bottom: .25em;
+}
+
+#sidebar .box h3 a {
+  text-decoration: none;
+  color: black;
+}
+
+#sidebar .box:hover h3 a {
+  text-decoration: underline;
+}
+
+#sidebar .box .photo {
+  margin-bottom: .5em;
+}
+
+#sidebar .box .photo img {
+  border: 1px solid silver; 
+  padding: 1px;
+}
+
+#sidebar .box ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#sidebar .box li {
+  margin-bottom: .25em;
 }
 
 a.new ,
@@ -235,4 +265,12 @@ pre {
 #new textarea {
     width: 600px;
     height: 400px;
+}
+
+a.hidden {
+  display: none;
+}
+
+.entry:hover a.hidden {
+  display: inline;
 }

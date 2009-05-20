@@ -39,39 +39,47 @@
             {% block body %}{% endblock %}
           </td>
           <td id="sidebar" class="right">
-              {% if GOOGLE_TALK_BADGE %}
-                  <div class="box">   
-                      <iframe src="{{ GOOGLE_TALK_BADGE }}" frameborder="0" height="60" width="200"></iframe>
-                  </div>
-              {% endif %}
-              <div class="box">
-                  {% for entry in recent_entries %}
-                      <div class="entry summary">
-                          <a href="/e/{{ entry.slug }}">{{ entry.title }}</a>
-                          <span class="date" title="{{ entry.published }}">
-                              - {{ entry.published|bettertimesince }}
-                          </span>
-                      </div>
-                  {% endfor %}
-              </div>
-              <div class="box">
-                  <a href="/archive">Archive</a>
-              </div>
-              {% if flickr_feed.link %}
-                  <div class="box">
-                      <a href="{{ flickr_feed.link }}">Photos</a>
-                  </div>
-              {% endif %}
-              {% if flickr_feed.items %}
-                  <div class="box">
-                      {% for item in flickr_feed.items %}
-                          <a href="{{ item.link }}"><img src="{{ item.media.m }}" title="{{ item.title }}" alt="{{ item.title }}"/></a>
+              {% if recent_entries %}
+                  <div class="box recent">
+                      <h3>Recent entries</h3>
+                      <ul>
+                      {% for entry in recent_entries %}
+                          <li class="entry summary">
+                              <a href="/e/{{ entry.slug }}">{{ entry.title }}</a>
+                              <span class="date" title="{{ entry.published }}">
+                                  - {{ entry.published|bettertimesince }}
+                              </span>
+                          </li>
                       {% endfor %}
+                      </ul>
                   </div>
               {% endif %}
-              {% if FRIENDFEED_NICKNAME %}
-                  <div class="box">
-                      <script type="text/javascript" src="http://friendfeed.com/embed/badge/{{ FRIENDFEED_NICKNAME }}"></script><noscript><a href="http://friendfeed.com/{{ FRIENDFEED_NICKNAME }}"><img alt="View my FriendFeed" style="border:0;" src="http://friendfeed.com/embed/badge/{{ FRIENDFEED_NICKNAME }}?format=png"/></a></noscript>
+              <div class="box">
+                  <h3>Links</h3>
+                  <ul>
+                    <li>
+                        <a href="/archive">Archive</a>
+                    </li>
+                  {% if EMAIL and NAME %}
+                      <li>
+                        <a href="mailto:{{ EMAIL }}">Email {{ NAME }}</a>
+                      </li>
+                  {% endif %}
+                  {% for link in LINKS %}
+                      <li>
+                          <a href="{{ link.url }}">{{ link.value }}</a>
+                      </li>
+                  {% endfor %}
+                  </ul>
+              </div>
+              {% if flickr_feed.items %}
+                  <div class="box flickr">
+                      <h3><a href="{{ flickr_feed.link }}">Photos</a></h3>
+                      {% for item in flickr_feed.items %}
+                          <div class="photo">
+                              <a href="{{ item.link }}"><img src="{{ item.media.m }}" title="{{ item.title }}" alt="{{ item.title }}"/></a>
+                          </div>
+                      {% endfor %}
                   </div>
               {% endif %}
               {% if current_city %}
@@ -79,9 +87,14 @@
                       <a href="http://maps.google.com/maps?q={{ current_city.latitude }},{{ current_city.longitude }}{% filter urlencode %} ({{ current_city.name }} {{ current_city.region}}, {{ current_city.country_code }}){% endfilter %}"><img src="http://maps.google.com/staticmap?zoom=9&amp;size=250x150&amp;markers={{ current_city.latitude }},{{ current_city.longitude }}&amp;key={{ current_city.maps_api_key }}" title="{{ current_city.name }}, {{ current_city.region }} {{ current_city.country_code }}" alt="{{ current_city.name }}, {{ current_city.region }} {{ current_city.country_code }}"/></a>
                   </div>
               {% endif %}
-              <div class="box">
-                  <script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http://www.google.com/ig/modules/translatemypage.xml&amp;up_source_language=en&amp;w=160&amp;h=60&amp;title=&amp;border=&amp;output=js"></script>
-        </div>
+              {% for box in BOXES %}
+                  <div class="box">
+                      {% if box.title %}
+                          <h3>{{ box.title }}<h3>
+                      {% endif %}
+                      {{ box.html }}
+                  </div>
+              {% endfor %} 
           </td>
       </tr>
     </table>

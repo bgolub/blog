@@ -7,12 +7,15 @@
             <h1>
                 <a href="/e/{{ entry.slug }}">{{ entry.title }}</a>
                 {% if admin %}
-                    <a class="edit" href="/edit/{{ entry.key }}">edit</a>
-                    <a class="delete" href="#">delete</a>
+                    <a class="hidden edit" href="/edit/{{ entry.key }}">edit</a>
+                    <a class="hidden delete" href="#">delete</a>
                 {% endif %}
             </h1>
             <div class="date" title="{{ entry.published }}">
                 {{ entry.published|bettertimesince }}
+                {% block permalink %}
+                  <a class="hidden" href="/e/{{ entry.slug }}">permalink</a>
+                {% endblock %}
             </div>
             <div class="body">
                 {{ entry.body }}
