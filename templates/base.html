@@ -77,7 +77,7 @@
                       <h3><a href="{{ flickr_feed.link }}">Photos</a></h3>
                       {% for item in flickr_feed.items %}
                           <div class="photo">
-                              <a href="{{ item.link }}"><img src="{{ item.media.m }}" title="{{ item.title }}" alt="{{ item.title }}"/></a>
+                              <a href="{{ item.link }}"><img src="{{ item.media.m }}" title="{{ item.title|escape }}" alt="{{ item.title|escape }}"/></a>
                           </div>
                       {% endfor %}
                   </div>
