@@ -374,8 +374,6 @@ class EntryPageHandler(BaseRequestHandler):
         extra_context = {
             "entries": [entry], # So we can use the same template for everything
             "entry": entry, # To easily pull out the title
-            "previous": db.Query(Entry).filter("published <", entry.published).order("-published").get(),
-            "next": db.Query(Entry).filter("published >", entry.published).order("published").get(),
             "invalid": self.request.get("invalid", False),
         }
         self.render("entry.html", extra_context)

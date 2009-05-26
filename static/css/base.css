@@ -149,17 +149,6 @@ a.delete {
   font-weight: normal;
 }
 
-.navigation {
-  font-size: 10pt;
-  margin-bottom: 1em;
-}
-
-.navigation .next {
-  position: absolute;
-  right: 0;
-  z-index: 1;
-}
-
 .infomessage {
   margin-bottom: 1em;
 }

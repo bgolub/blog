@@ -15,16 +15,6 @@
 {% endblock %}
 
 {% block below_entries %}
-    {% if previous or next %}
-        <div class="navigation">
-            {% if previous %}
-                <a class="previous" href="/e/{{ previous.slug}}">&laquo; {{ previous.title }}</a>
-            {% endif %}
-            {% if next %}
-                <a class="next" href="/e/{{ next.slug}}">{{ next.title }} &raquo;</a>
-            {% endif %}
-        </div>
-    {% endif %}
     <div id="disqus_thread"></div>
 {% endblock %}
 
