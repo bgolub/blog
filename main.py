@@ -504,6 +504,11 @@ class OpenSearchHandler(BaseRequestHandler):
         self.render("opensearch.xml")
 
 
+class SearchHandler(BaseRequestHandler):
+    def get(self):
+        self.render("search.html")
+
+
 application = webapp.WSGIApplication([
     ("/", MainPageHandler),
     ("/archive/?", ArchivePageHandler),
@@ -515,6 +520,7 @@ application = webapp.WSGIApplication([
     ("/(\d+)/(\d+)/(\d+)/([\w-]+)/?", OldBlogRedirectHandler),
     ("/feed/?", FeedRedirectHandler),
     ("/opensearch.xml/?", OpenSearchHandler),
+    ("/search/?", SearchHandler),
     ("/.*", NotFoundHandler),
 ], debug=True)
 
