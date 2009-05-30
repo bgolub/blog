@@ -3,12 +3,18 @@
 {% block entry_class %}{{ block.super }} full{% endblock %}
 
 {% block below_entries %}
-    <div class="navigation">
+    <table class="navigation">
+        <tr>
         {% if previous %}
-            <a class="previous" href="?start={{ previous }}">&laquo; Previous</a>
+            <td class="previous">
+                <a href="?start={{ previous }}">&laquo; Previous</a>
+            </td>
         {% endif %}
         {% if offset %}
-            <a class="next" href="?start={{ next }}">Next &raquo;</a>
+            <td class="next">
+                <a href="?start={{ next }}">Next &raquo;</a>
+            </td>
         {% endif %}
-    </div>
+        </tr>
+    </table>
 {% endblock %}

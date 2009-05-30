@@ -263,3 +263,13 @@ a.hidden {
 .entry:hover a.hidden {
   display: inline;
 }
+
+.navigation {
+ font-size: 10pt;
+ margin-bottom: 1em;
+ width: 100%;
+}
+
+.navigation .next {
+  text-align: right;
+}
