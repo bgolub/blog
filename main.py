@@ -109,14 +109,15 @@ class BaseRequestHandler(webapp.RequestHandler):
         key = "current_city/now"
         current_city = memcache.get(key)
         if not current_city:
-            response = urlfetch.fetch("https://www.dopplr.com/api/traveller_info?format=js&token=" + DOPPLR_TOKEN)
-            if response.status_code == 200:
-                data = simplejson.loads(response.content)
-                current_city = data["traveller"]["current_city"]
-                current_city["maps_api_key"] = MAPS_API_KEY
-                memcache.set(key, current_city, 60*60*5)
-            else:
-                current_city = None
+            try:
+                response = urlfetch.fetch("https://www.dopplr.com/api/traveller_info?format=js&token=" + DOPPLR_TOKEN)
+                if response.status_code == 200:
+                    data = simplejson.loads(response.content)
+                    current_city = data["traveller"]["current_city"]
+                    current_city["maps_api_key"] = MAPS_API_KEY
+                    memcache.set(key, current_city, 60*60*5)
+            except (urlfetch.DownloadError, ValueError):
+                pass
         return current_city
 
     def get_recent_entries(self, num=NUM_RECENT):
@@ -179,10 +180,13 @@ class BaseRequestHandler(webapp.RequestHandler):
         key = "headers/" + url
         headers = memcache.get(key)
         if not headers:
-            response = urlfetch.fetch(url, method=urlfetch.HEAD)
-            if response.status_code == 200:
-                headers = response.headers
-                memcache.set(key, headers)
+            try:
+                response = urlfetch.fetch(url, method=urlfetch.HEAD)
+                if response.status_code == 200:
+                    headers = response.headers
+                    memcache.set(key, headers)
+            except urlfetch.DownloadError:
+                pass
         return headers
 
     def find_enclosure(self, html):
@@ -299,8 +303,11 @@ class BaseRequestHandler(webapp.RequestHandler):
         args = urllib.urlencode({
             "uri": self.entry_link(entry, absolute=True),
         })
-        response = urlfetch.fetch("http://validator.w3.org/check?" + args,
-            method=urlfetch.HEAD)
+        try:
+            response = urlfetch.fetch("http://validator.w3.org/check?" + args,
+                method=urlfetch.HEAD)
+        except urlfetch.DownloadError:
+            return True
         return response.headers["X-W3C-Validator-Status"] == "Valid"
 
     def entry_link(self, entry, query_args={}, absolute=False):
@@ -317,22 +324,24 @@ class BaseRequestHandler(webapp.RequestHandler):
         key = "flickr_feed"
         flickr_feed = memcache.get(key)
         if not flickr_feed:
+            flickr_feed = {}
             args = urllib.urlencode({
                 "id": FLICKR_ID,
                 "format": "json",
                 "nojsoncallback": 1,
             })
-            response = urlfetch.fetch(
-                "http://api.flickr.com/services/feeds/photos_public.gne?" + \
-                args)
-            if response.status_code == 200:
-                try:
-                    flickr_feed = demjson.decode(response.content)
-                    memcache.set(key, flickr_feed, 60*5)
-                except ValueError:
-                    flickr_feed = {}
-            else:
-                flickr_feed = {}
+            try:
+                response = urlfetch.fetch(
+                    "http://api.flickr.com/services/feeds/photos_public.gne?" \
+                        + args)
+                if response.status_code == 200:
+                    try:
+                        flickr_feed = demjson.decode(response.content)
+                        memcache.set(key, flickr_feed, 60*5)
+                    except ValueError:
+                        flickr_feed = {}
+            except urlfetch.DownloadError:
+                pass
         # Slice here to avoid doing it in the template
         flickr_feed["items"] = flickr_feed.get("items", [])[:NUM_FLICKR]
         return flickr_feed
