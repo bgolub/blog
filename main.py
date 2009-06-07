@@ -106,7 +106,7 @@ class BaseRequestHandler(webapp.RequestHandler):
                 redirect += "?" + request.query_string
             return self.redirect(redirect, permanent=True)
 
-    def head(self):
+    def head(self, *args, **kwargs):
         pass
 
     def raise_error(self, code):
