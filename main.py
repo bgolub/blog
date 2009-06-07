@@ -98,6 +98,14 @@ class EntryForm(djangoforms.ModelForm):
 
 
 class BaseRequestHandler(webapp.RequestHandler):
+    def initialize(self, request, response):
+        webapp.RequestHandler.initialize(self, request, response)
+        if request.path.endswith("/") and not request.path == "/":
+            redirect = request.path[:-1]
+            if request.query_string:
+                redirect += "?" + request.query_string
+            return self.redirect(redirect, permanent=True)
+
     def head(self):
         pass
 
