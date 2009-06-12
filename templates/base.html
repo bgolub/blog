@@ -22,16 +22,6 @@
                 <a href="/">{{ TITLE }}</a>
             </div>
         {% endif %}
-        <div id="search">
-            <form action="http://www.google.com/search" method="get">
-                <div>
-                    <input name="domains" type="hidden" value="{{ request.host }}"/>
-                    <input name="sitesearch" type="hidden" value="{{ request.host }}"/>
-                    <input name="q" size="20" type="text"/>
-                    <input type="submit" value="Search"/>
-                </div>
-            </form>
-        </div>
     </div>
     <table class="columns">
       <tr>
@@ -39,6 +29,20 @@
             {% block body %}{% endblock %}
           </td>
           <td id="sidebar" class="right">
+              {% block search %}
+                  <div class="box">
+                      <h3>Search</h3>
+                      <!-- Google Custom Search Element -->
+                      <div id="cse" style="width:100%;">Loading</div>
+                      <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                      <script type="text/javascript">
+                          google.load('search', '1');
+                          google.setOnLoadCallback(function(){
+                              new google.search.CustomSearchControl().draw('cse');
+                          }, true);
+                      </script>
+                  </div>
+              {% endblock %}
               {% if recent_entries %}
                   <div class="box recent">
                       <h3>Recent entries</h3>
@@ -59,9 +63,6 @@
                   <ul>
                     <li>
                         <a href="/archive">Archive</a>
-                    </li>
-                    <li>
-                        <a href="/search">Search</a>
                     </li>
                   {% if EMAIL and NAME %}
                       <li>
