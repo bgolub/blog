@@ -207,8 +207,8 @@ class BaseRequestHandler(webapp.RequestHandler):
         if img:
             headers = self.fetch_headers(img["src"])
             if headers:
-                enclosure = Enclosure(img["src"], headers["Content-Length"],
-                    headers["Content-Type"])
+                enclosure = feedgenerator.Enclosure(img["src"],
+                    headers["Content-Length"], headers["Content-Type"])
                 return enclosure
         return None
 
