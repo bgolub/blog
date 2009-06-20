@@ -94,9 +94,9 @@
               {% for box in BOXES %}
                   <div class="box">
                       {% if box.title %}
-                          <h3>{{ box.title }}<h3>
+                          <h3>{{ box.title|safe }}<h3>
                       {% endif %}
-                      {{ box.html }}
+                      {{ box.html|safe }}
                   </div>
               {% endfor %} 
           </td>

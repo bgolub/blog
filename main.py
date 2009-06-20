@@ -1,6 +1,5 @@
 import BeautifulSoup
 import demjson
-import feedgenerator
 import functools
 import hashlib
 import logging
@@ -8,13 +7,16 @@ import os
 import uuid
 import urllib
 
+from google.appengine.dist import use_library
+use_library("django", "1.0")
+
 from django.conf import settings
 settings._target = None
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
 from django.template.defaultfilters import slugify
+from django.utils import feedgenerator
 from django.utils import simplejson
-from django.utils.feedgenerator import Enclosure
 
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
@@ -137,6 +139,8 @@ class BaseRequestHandler(webapp.RequestHandler):
         return entries
 
     def get_main_page_entries(self, num=NUM_MAIN):
+        if self.request.get("format", None) == "atom":
+            num = 10
         key = "entries/main/%d" % num
         entries = memcache.get(key)
         if not entries:
