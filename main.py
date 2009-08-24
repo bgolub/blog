@@ -139,8 +139,6 @@ class BaseRequestHandler(webapp.RequestHandler):
         return entries
 
     def get_main_page_entries(self, num=NUM_MAIN):
-        if self.request.get("format", None) == "atom":
-            num = 10
         key = "entries/main/%d" % num
         entries = memcache.get(key)
         if not entries:
