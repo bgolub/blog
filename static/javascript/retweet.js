@@ -26,7 +26,7 @@ window.RetweetJS = {
 
 	// Tweet Prefix text
 	// "RT @jeresig " would result in: "RT @jeresig Link Title http://bit.ly/asdf"
-	prefix: "",
+	prefix: "RT @bgolub: ",
 
 	// Style information
 	styling: "a.retweet { font: 12px Helvetica,Arial; color: #000; text-decoration: none; border: 0px; }" +

@@ -11,15 +11,15 @@
                     <a class="hidden delete" href="#">delete</a>
                 {% endif %}
             </h1>
+            <div class="share">
+                <a href="#" onclick="var e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('src','http://friendfeed.com/share/bookmarklet/javascript?url={% filter urlencode %}http://{{ request.host }}/e/{{ entry.slug }}{% endfilter %}&amp;title={{ entry.title|urlencode }}');document.body.appendChild(e); return false;"><img src="http://friendfeed.com/static/images/icons/internal.png" title="Share on FriendFeed" alt="Share on FriendFeed"/></a>
+                <a class="retweet" href="/e/{{ entry.slug }}" title="{{ entry.title }}"></a>
+            </div>
             <div class="date">
                 <span title="{{ entry.published }}">{{ entry.published|bettertimesince }}</span>
                 {% block permalink %}
                   <a class="hidden" href="/e/{{ entry.slug }}">permalink</a>
                 {% endblock %}
-                <span class="share">
-                    <a href="#" onclick="var e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('src','http://friendfeed.com/share/bookmarklet/javascript?url={% filter urlencode %}http://{{ request.host }}/e/{{ entry.slug }}{% endfilter %}&amp;title={{ entry.title|urlencode }}');document.body.appendChild(e); return false;"><img src="http://friendfeed.com/static/images/icons/internal.png" title="Share on FriendFeed" alt="Share on FriendFeed"/></a>
-                    <a class="retweet" href="/e/{{ entry.slug }}" title="{{ entry.title }}"></a>
-                </span>
             </div>
             <div class="body">
                 {{ entry.body|safe }}
