@@ -273,3 +273,11 @@ a.hidden {
 .navigation .next {
   text-align: right;
 }
+
+.share {
+  float: right;
+}
+
+.share img {
+  vertical-align: middle;
+}
